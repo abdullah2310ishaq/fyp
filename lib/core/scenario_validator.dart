@@ -12,10 +12,21 @@ List<String> validateScenario(LifeScenario story) {
     if (step.sourceRef == null || step.sourceRef!.trim().isEmpty) {
       errors.add('${step.id}: missing source reference');
     }
-    if ({StoryKind.feeling, StoryKind.checklist, StoryKind.grounding}.contains(step.kind) && !step.unscored) {
+    if ({
+          StoryKind.feeling,
+          StoryKind.checklist,
+          StoryKind.grounding,
+        }.contains(step.kind) &&
+        !step.unscored) {
       errors.add('${step.id}: self-report/practice node must be unscored');
     }
-    if ({StoryKind.choice, StoryKind.multiChoice, StoryKind.ranking, StoryKind.checklist}.contains(step.kind) && step.choices.isEmpty) {
+    if ({
+          StoryKind.choice,
+          StoryKind.multiChoice,
+          StoryKind.ranking,
+          StoryKind.checklist,
+        }.contains(step.kind) &&
+        step.choices.isEmpty) {
       errors.add('${step.id}: interaction has no choices');
     }
     for (final choice in step.choices) {
@@ -34,8 +45,13 @@ List<String> validateScenario(LifeScenario story) {
   if (story.steps.last.kind != StoryKind.terminal) {
     errors.add('${story.id}: final node is not terminal');
   }
-  final totalWeight = story.weights.values.fold<double>(0, (sum, value) => sum + value);
-  if ((totalWeight - 1).abs() > .001) errors.add('${story.id}: weights total $totalWeight');
+  final totalWeight = story.weights.values.fold<double>(
+    0,
+    (sum, value) => sum + value,
+  );
+  if ((totalWeight - 1).abs() > .001) {
+    errors.add('${story.id}: weights total $totalWeight');
+  }
   return errors;
 }
 

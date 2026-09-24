@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../core/life_theme.dart';
-import '../data/scenario_data.dart';
+import '../data/expanded_scenarios.dart';
 import '../models/story.dart';
 import '../state/app_state.dart';
 import '../widgets/life_widgets.dart';
@@ -181,9 +181,9 @@ class HomeScreen extends StatelessWidget {
                       mainAxisSpacing: 14,
                       childAspectRatio: columns == 2 ? .77 : .86,
                     ),
-                    itemCount: scenarios.length,
+                    itemCount: expandedScenarios.length,
                     itemBuilder: (context, index) => ScenarioCard(
-                      story: scenarios[index],
+                      story: expandedScenarios[index],
                       number: index + 1,
                     ),
                   );
@@ -419,59 +419,100 @@ class ProfileScreen extends StatelessWidget {
                   ),
                 const SizedBox(height: 24),
                 Text(
-                  'Best practice scores',
+                  'Score history',
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
                 const SizedBox(height: 12),
                 if (!state.isPremium)
                   SoftCard(
-                    child: Row(children: [
-                      const Icon(Icons.lock_rounded, color: LifeColors.purple),
-                      const SizedBox(width: 12),
-                      const Expanded(child: Text('Score history is available in premium demo mode.')),
-                      TextButton(onPressed: () => context.push('/paywall'), child: const Text('View')),
-                    ]),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.lock_rounded,
+                          color: LifeColors.purple,
+                        ),
+                        const SizedBox(width: 12),
+                        const Expanded(
+                          child: Text(
+                            'Score history is available in premium demo mode.',
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () => context.push('/paywall'),
+                          child: const Text('View'),
+                        ),
+                      ],
+                    ),
                   )
                 else ...[
-                  ...scenarios
+                  ...expandedScenarios
                       .where((item) => state.bestScores.containsKey(item.id))
                       .map(
-                      (item) => Padding(
-                        padding: const EdgeInsets.only(bottom: 10),
-                        child: SoftCard(
-                          child: Row(
-                            children: [
-                              Icon(item.icon, color: item.color),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Text(
-                                  item.title.get(state.isUrdu),
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w800,
+                        (item) => Padding(
+                          padding: const EdgeInsets.only(bottom: 10),
+                          child: SoftCard(
+                            child: Row(
+                              children: [
+                                Icon(item.icon, color: item.color),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        item.title.get(state.isUrdu),
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.w800,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 3),
+                                      Text(
+                                        (state.scoreHistory[item.id] ??
+                                                const <int>[])
+                                            .map((value) => '$value')
+                                            .join('  •  '),
+                                        style: const TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.black54,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                              ),
-                              Text(
-                                '${state.bestScores[item.id]}',
-                                style: const TextStyle(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.w900,
-                                  color: LifeColors.teal,
+                                Text(
+                                  '${state.bestScores[item.id]}',
+                                  style: const TextStyle(
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.w900,
+                                    color: LifeColors.teal,
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ),
-                      ),
                   const SizedBox(height: 20),
-                  Text('Demo billing history', style: Theme.of(context).textTheme.titleLarge),
+                  Text(
+                    'Demo billing history',
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
                   const SizedBox(height: 10),
                   const SoftCard(
                     child: ListTile(
                       contentPadding: EdgeInsets.zero,
-                      leading: CircleAvatar(backgroundColor: LifeColors.mint, child: Icon(Icons.receipt_long_rounded, color: LifeColors.teal)),
-                      title: Text('Premium demo activation', style: TextStyle(fontWeight: FontWeight.w900)),
+                      leading: CircleAvatar(
+                        backgroundColor: LifeColors.mint,
+                        child: Icon(
+                          Icons.receipt_long_rounded,
+                          color: LifeColors.teal,
+                        ),
+                      ),
+                      title: Text(
+                        'Premium demo activation',
+                        style: TextStyle(fontWeight: FontWeight.w900),
+                      ),
                       subtitle: Text('Simulated locally • No charge'),
                       trailing: Text('PKR 0'),
                     ),

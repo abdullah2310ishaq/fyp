@@ -137,8 +137,15 @@ class SettingsScreen extends StatelessWidget {
           decoration: const InputDecoration(labelText: 'What is 9 + 7?'),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(dialogContext, false), child: const Text('Cancel')),
-          FilledButton(onPressed: () => Navigator.pop(dialogContext, answer.text.trim() == '16'), child: const Text('Continue')),
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () =>
+                Navigator.pop(dialogContext, answer.text.trim() == '16'),
+            child: const Text('Continue'),
+          ),
         ],
       ),
     );
@@ -156,23 +163,48 @@ class SettingsScreen extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text('Demo panel', style: Theme.of(panelContext).textTheme.headlineMedium),
+                Text(
+                  'Demo panel',
+                  style: Theme.of(panelContext).textTheme.headlineMedium,
+                ),
                 const SizedBox(height: 8),
-                const Text('Every setting below is local and simulated. No billing or server is contacted.'),
+                const Text(
+                  'Every setting below is local and simulated. No billing or server is contacted.',
+                ),
                 const SizedBox(height: 16),
                 SegmentedButton<SubscriptionState>(
                   segments: const [
-                    ButtonSegment(value: SubscriptionState.free, label: Text('Free')),
-                    ButtonSegment(value: SubscriptionState.active, label: Text('Active')),
-                    ButtonSegment(value: SubscriptionState.expired, label: Text('Expired')),
+                    ButtonSegment(
+                      value: SubscriptionState.free,
+                      label: Text('Free'),
+                    ),
+                    ButtonSegment(
+                      value: SubscriptionState.active,
+                      label: Text('Active'),
+                    ),
+                    ButtonSegment(
+                      value: SubscriptionState.expired,
+                      label: Text('Expired'),
+                    ),
                   ],
                   selected: {state.subscription},
-                  onSelectionChanged: (value) => state.setDemoSubscription(value.first),
+                  onSelectionChanged: (value) =>
+                      state.setDemoSubscription(value.first),
                 ),
                 const SizedBox(height: 12),
-                OutlinedButton(onPressed: () => state.setDemoCoins(state.coins + 100), child: Text('Add 100 coins • Current ${state.coins}')),
+                OutlinedButton(
+                  onPressed: () => state.setDemoCoins(state.coins + 100),
+                  child: Text('Add 100 coins • Current ${state.coins}'),
+                ),
                 const SizedBox(height: 8),
-                OutlinedButton.icon(onPressed: () { Navigator.pop(sheetContext); _confirmReset(context, state); }, icon: const Icon(Icons.delete_outline_rounded), label: const Text('Reset all local demo data')),
+                OutlinedButton.icon(
+                  onPressed: () {
+                    Navigator.pop(sheetContext);
+                    _confirmReset(context, state);
+                  },
+                  icon: const Icon(Icons.delete_outline_rounded),
+                  label: const Text('Reset all local demo data'),
+                ),
               ],
             ),
           ),

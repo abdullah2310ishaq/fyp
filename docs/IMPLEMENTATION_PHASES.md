@@ -23,19 +23,21 @@ Production illustration commissioning remains a separate art deliverable; the du
 - Nickname, age 6–15 and child avatar selection
 - Local route state, eight-card home, resume card and help sheet
 
-## Phase 4 — Story engine (complete for current authored content)
+## Phase 4 — Story engine (complete)
 
-- Dialogue, teaching, unscored feeling slider, choice/coaching loop, guided text practice and terminal nodes
+- Dialogue, teaching, checklist, unscored feeling slider, critical coaching loop, multi-select, accessible reorder/rank, grounding, text/mock voice and terminal nodes
 - Saved active story/step, disabled unsafe retry choices and double-reward prevention through terminal completion state
 - Pause, resume, exit and contextual help
 
-## Phase 5 — Eight scenario catalogue (complete dummy scripts)
+## Phase 5 — Eight scenario catalogue (complete)
 
-- S01–S04 adapted from expanded `Scenario.md` themes
-- S05–S08 are explicitly editorial expansions of the shorter master-spec outlines
-- Every story has bilingual teaching, a critical decision, tailored coaching, practice and a safe ending
-
-The current dummy stories are intentionally shorter than the complete source document. A production content pass should transcribe and clinically/editorially review every numbered S01–S04 scene before release.
+- S01 contains its checklist and all 10 numbered source scenes
+- S02 contains its checklist and all 12 numbered source scenes
+- S03 contains its checklist and all 12 numbered source scenes
+- S04 contains its checklist and all 13 numbered source scenes
+- S05–S08 are explicitly marked editorial expansions of the shorter master-spec outlines
+- Every story has bilingual teaching, critical decisions, tailored coaching, practice and a safe ending
+- `docs/CONTENT_MATRIX.md` records the source-to-node mapping
 
 ## Phase 6 — Rewards and debrief (complete)
 

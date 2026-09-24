@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../data/scenario_data.dart';
+import '../data/expanded_scenarios.dart';
 import '../models/story.dart';
 
 enum SubscriptionState { free, active, expired }
@@ -23,7 +23,9 @@ class AppState extends ChangeNotifier {
   int coins = 40;
   int streak = 1;
   final Map<String, int> bestScores = {};
+  final Map<String, List<int>> scoreHistory = {};
   final Set<String> badges = {};
+  String? lastCompletionDay;
 
   String? activeScenarioId;
   int activeStepIndex = 0;
@@ -39,9 +41,10 @@ class AppState extends ChangeNotifier {
   Map<String, int> lastDimensionScores = {};
 
   bool get isPremium => subscription == SubscriptionState.active;
+  String tr(String en, String ur) => isUrdu ? ur : en;
   LifeScenario? get activeScenario => activeScenarioId == null
       ? null
-      : scenarios.where((item) => item.id == activeScenarioId).firstOrNull;
+      : expandedScenarios.where((item) => item.id == activeScenarioId).firstOrNull;
   StoryStep? get activeStep {
     final story = activeScenario;
     if (story == null || activeStepIndex >= story.steps.length) return null;
@@ -62,6 +65,7 @@ class AppState extends ChangeNotifier {
         SubscriptionState.values[_prefs!.getInt('subscription') ?? 0];
     coins = _prefs!.getInt('coins') ?? 40;
     streak = _prefs!.getInt('streak') ?? 1;
+    lastCompletionDay = _prefs!.getString('lastCompletionDay');
     activeScenarioId = _prefs!.getString('activeScenario');
     activeStepIndex = _prefs!.getInt('activeStep') ?? 0;
     earnedPoints = _prefs!.getInt('earned') ?? 0;
@@ -86,6 +90,15 @@ class AppState extends ChangeNotifier {
       final decoded = jsonDecode(scores) as Map<String, dynamic>;
       bestScores.addAll(
         decoded.map((key, value) => MapEntry(key, value as int)),
+      );
+    }
+    final history = _prefs!.getString('history');
+    if (history != null) {
+      final decoded = jsonDecode(history) as Map<String, dynamic>;
+      scoreHistory.addAll(
+        decoded.map(
+          (key, value) => MapEntry(key, (value as List<dynamic>).cast<int>()),
+        ),
       );
     }
     badges.addAll(_prefs!.getStringList('badges') ?? const []);
@@ -221,11 +234,20 @@ class AppState extends ChangeNotifier {
     if (hintsUsed >= 3) return 'You have used all 3 hints in this story.';
     if (coins < 10) return 'You need 10 practice coins for a hint.';
     final step = activeStep;
-    if (step == null || (step.kind != StoryKind.choice && step.kind != StoryKind.multiChoice)) {
+    if (step == null ||
+        (step.kind != StoryKind.choice && step.kind != StoryKind.multiChoice)) {
       return 'A hint will be available at the next decision.';
     }
-    final removable = step.choices.where((choice) => choice.quality == ChoiceQuality.tryAgain && !disabledChoices.contains(choice.id)).firstOrNull;
-    if (removable == null) return 'Dost has already narrowed this decision for you.';
+    final removable = step.choices
+        .where(
+          (choice) =>
+              choice.quality == ChoiceQuality.tryAgain &&
+              !disabledChoices.contains(choice.id),
+        )
+        .firstOrNull;
+    if (removable == null) {
+      return 'Dost has already narrowed this decision for you.';
+    }
     coins -= 10;
     hintsUsed += 1;
     disabledChoices.add(removable.id);
@@ -247,7 +269,7 @@ class AppState extends ChangeNotifier {
                   .round()
                   .clamp(0, 100),
     };
-    final story = scenarios.firstWhere((item) => item.id == id);
+    final story = expandedScenarios.firstWhere((item) => item.id == id);
     var weighted = 0.0;
     var usedWeight = 0.0;
     for (final entry in story.weights.entries) {
@@ -263,6 +285,11 @@ class AppState extends ChangeNotifier {
               : ((earnedPoints / possiblePoints) * 100).round().clamp(0, 100))
         : (weighted / usedWeight).round().clamp(0, 100);
     final previous = bestScores[id] ?? 0;
+    scoreHistory.update(
+      id,
+      (items) => [...items, score],
+      ifAbsent: () => [score],
+    );
     bestScores[id] = score > previous ? score : previous;
     final baseCoins = score >= 90
         ? 100
@@ -271,11 +298,14 @@ class AppState extends ChangeNotifier {
         : score >= 60
         ? 50
         : 20;
-    final firstBonus = previous == 0 ? 25 : 0;
-    final improvement = previous > 0 && score > previous
+    _updateStreak();
+    final firstBonus = isPremium && previous == 0 ? 25 : 0;
+    final perfectBonus = isPremium && score == 100 ? 50 : 0;
+    final streakBonus = isPremium ? (streak * 10).clamp(0, 50) : 0;
+    final improvement = isPremium && previous > 0 && score > previous
         ? (score - previous).clamp(10, 100)
         : 0;
-    coins += baseCoins + firstBonus + improvement;
+    coins += baseCoins + firstBonus + perfectBonus + streakBonus + improvement;
     if (score >= 75) badges.add(story.badge);
     activeScenarioId = null;
     activeStepIndex = 0;
@@ -312,8 +342,10 @@ class AppState extends ChangeNotifier {
     coins = 40;
     streak = 1;
     bestScores.clear();
+    scoreHistory.clear();
     badges.clear();
     activeScenarioId = null;
+    lastCompletionDay = null;
     notifyListeners();
   }
 
@@ -333,7 +365,10 @@ class AppState extends ChangeNotifier {
       prefs.setInt('coins', coins),
       prefs.setInt('streak', streak),
       prefs.setString('scores', jsonEncode(bestScores)),
+      prefs.setString('history', jsonEncode(scoreHistory)),
       prefs.setStringList('badges', badges.toList()),
+      if (lastCompletionDay != null)
+        prefs.setString('lastCompletionDay', lastCompletionDay!),
     ]);
     if (activeScenarioId == null) {
       await prefs.remove('activeScenario');
@@ -347,5 +382,20 @@ class AppState extends ChangeNotifier {
       await prefs.setString('dimensionPossible', jsonEncode(dimensionPossible));
     }
     notifyListeners();
+  }
+
+  void _updateStreak() {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final todayKey = '${today.year}-${today.month}-${today.day}';
+    if (lastCompletionDay == todayKey) return;
+    if (lastCompletionDay != null) {
+      final parts = lastCompletionDay!.split('-').map(int.parse).toList();
+      final previous = DateTime(parts[0], parts[1], parts[2]);
+      streak = today.difference(previous).inDays == 1 ? streak + 1 : 1;
+    } else {
+      streak = 1;
+    }
+    lastCompletionDay = todayKey;
   }
 }

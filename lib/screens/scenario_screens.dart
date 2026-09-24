@@ -3,10 +3,11 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../core/life_theme.dart';
-import '../data/scenario_data.dart';
+import '../data/expanded_scenarios.dart';
 import '../models/story.dart';
 import '../state/app_state.dart';
 import '../widgets/life_widgets.dart';
+import '../widgets/typewriter_text.dart';
 
 class ScenarioIntroScreen extends StatelessWidget {
   const ScenarioIntroScreen({super.key, required this.id});
@@ -15,28 +16,14 @@ class ScenarioIntroScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final state = context.watch<AppState>();
-    final story = scenarios.firstWhere((item) => item.id == id);
+    final story = expandedScenarios.firstWhere((item) => item.id == id);
     final locked = !state.canOpen(story);
     final ur = state.isUrdu;
     return Scaffold(
       appBar: AppBar(
         actions: [
           IconButton(
-            tooltip: 'Hint — 10 coins',
-            onPressed: () async {
-              final message = await state.useHint();
-              if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
-              }
-            },
-            icon: Badge(
-              label: Text('${3 - state.hintsUsed}'),
-              isLabelVisible: state.isPremium,
-              child: const Icon(Icons.lightbulb_outline_rounded),
-            ),
-          ),
-          IconButton(
-            tooltip: 'Get help',
+            tooltip: state.tr('Get help', 'مدد لیں'),
             onPressed: () => showHelpSheet(context),
             icon: const Icon(Icons.help_outline_rounded),
           ),
@@ -223,7 +210,7 @@ class _SimulationScreenState extends State<SimulationScreen> {
         body: Center(
           child: FilledButton(
             onPressed: () => context.go('/home'),
-            child: const Text('Back to home'),
+            child: Text(state.tr('Back to home', 'گھر واپس جائیں')),
           ),
         ),
       );
@@ -242,7 +229,7 @@ class _SimulationScreenState extends State<SimulationScreen> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          tooltip: 'Pause and leave',
+          tooltip: state.tr('Pause and leave', 'روکیں اور نکلیں'),
           onPressed: () => _pause(context),
           icon: const Icon(Icons.close_rounded),
         ),
@@ -261,7 +248,21 @@ class _SimulationScreenState extends State<SimulationScreen> {
         ),
         actions: [
           IconButton(
-            tooltip: 'Help',
+            tooltip: state.tr('Hint — 10 coins', 'اشارہ — ۱۰ سکے'),
+            onPressed: () async {
+              final message = await state.useHint();
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+              }
+            },
+            icon: Badge(
+              label: Text('${3 - state.hintsUsed}'),
+              isLabelVisible: state.isPremium,
+              child: const Icon(Icons.lightbulb_outline_rounded),
+            ),
+          ),
+          IconButton(
+            tooltip: state.tr('Help', 'مدد'),
             onPressed: () => showHelpSheet(context),
             icon: const Icon(Icons.help_outline_rounded),
           ),
@@ -286,6 +287,23 @@ class _SimulationScreenState extends State<SimulationScreen> {
                   scene: step.scene,
                   character: step.character,
                   speaker: step.speaker.get(ur),
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: List.generate(
+                    story.steps.length,
+                    (index) => Expanded(
+                      child: AnimatedContainer(
+                        duration: state.reduceMotion ? Duration.zero : const Duration(milliseconds: 180),
+                        height: 6,
+                        margin: const EdgeInsets.symmetric(horizontal: 2),
+                        decoration: BoxDecoration(
+                          color: index <= state.activeStepIndex ? LifeColors.teal : Colors.black12,
+                          borderRadius: BorderRadius.circular(99),
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 16),
                 AnimatedSwitcher(
@@ -326,9 +344,10 @@ class _SimulationScreenState extends State<SimulationScreen> {
                           ],
                         ),
                         const SizedBox(height: 12),
-                        Text(
-                          step.text.get(ur),
+                        TypewriterText(
+                          text: step.text.get(ur),
                           style: Theme.of(context).textTheme.bodyLarge,
+                          reduceMotion: state.reduceMotion,
                         ),
                       ],
                     ),
@@ -572,8 +591,11 @@ class _SimulationScreenState extends State<SimulationScreen> {
                 ],
               ),
               Slider(value: state.feelingValue, onChanged: state.updateFeeling),
-              const Text(
-                'Every feeling is accepted and unscored.',
+              Text(
+                state.tr(
+                  'Every feeling is accepted and unscored.',
+                  'ہر احساس قبول ہے اور اس پر نمبر نہیں۔',
+                ),
                 style: TextStyle(
                   fontWeight: FontWeight.w700,
                   color: Colors.black54,
@@ -583,7 +605,10 @@ class _SimulationScreenState extends State<SimulationScreen> {
           ),
         ),
         const SizedBox(height: 12),
-        FilledButton(onPressed: state.nextStep, child: const Text('Continue')),
+        FilledButton(
+          onPressed: state.nextStep,
+          child: Text(state.tr('Continue', 'جاری رکھیں')),
+        ),
       ],
     ),
     StoryKind.grounding => Column(
@@ -687,8 +712,11 @@ class _SimulationScreenState extends State<SimulationScreen> {
           onChanged: (_) => setState(() {}),
           minLines: 2,
           maxLines: 4,
-          decoration: const InputDecoration(
-            hintText: 'Type a practice sentence (not real personal details)',
+          decoration: InputDecoration(
+            hintText: state.tr(
+              'Type a practice sentence (not real personal details)',
+              'مشق کا جملہ لکھیں (حقیقی ذاتی معلومات نہیں)',
+            ),
           ),
         ),
         const SizedBox(height: 10),
@@ -698,18 +726,21 @@ class _SimulationScreenState extends State<SimulationScreen> {
                 'I need to tell you something that made me feel unsafe. Please help me.',
           ),
           icon: const Icon(Icons.lightbulb_outline_rounded),
-          label: const Text('Use a guided example'),
+          label: Text(state.tr('Use a guided example', 'رہنمائی والی مثال لیں')),
         ),
         const SizedBox(height: 10),
         FilledButton(
           onPressed: textController.text.trim().isEmpty
               ? null
               : () => state.completeInteraction(correct: true),
-          child: const Text('Continue safely'),
+          child: Text(state.tr('Continue safely', 'محفوظ انداز میں جاری رکھیں')),
         ),
         const SizedBox(height: 8),
-        const Text(
-          'Demo transcript • No audio is recorded • Practice text is not saved',
+        Text(
+          state.tr(
+            'Demo transcript • No audio is recorded • Practice text is not saved',
+            'ڈیمو عبارت • آواز ریکارڈ نہیں • مشق کا متن محفوظ نہیں',
+          ),
           textAlign: TextAlign.center,
           style: TextStyle(fontSize: 12, color: Colors.black54),
         ),
@@ -722,7 +753,7 @@ class _SimulationScreenState extends State<SimulationScreen> {
         if (context.mounted) context.go('/debrief/$id/$score');
       },
       icon: const Icon(Icons.celebration_rounded),
-      label: const Text('See what I practised'),
+      label: Text(state.tr('See what I practised', 'میری مشق دیکھیں')),
     ),
     _ => FilledButton(
       onPressed: state.nextStep,
@@ -870,23 +901,26 @@ class _PaywallScreenState extends State<PaywallScreen> {
                 'This is a simulated subscription for the offline FYP demo. No payment or billing occurs.',
                 textAlign: TextAlign.center,
               ),
-            const SizedBox(height: 22),
-            SegmentedButton<bool>(
-              segments: const [
-                ButtonSegment(value: false, label: Text('Monthly • PKR 499')),
-                ButtonSegment(value: true, label: Text('Annual • PKR 3,999')),
-              ],
-              selected: {annual},
-              onSelectionChanged: (value) => setState(() => annual = value.first),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              annual ? 'Demo selection • Save 33% label only' : 'Demo selection • Cancel anytime label only',
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 12, color: Colors.black54),
-            ),
-            const SizedBox(height: 18),
-            const SoftCard(
+              const SizedBox(height: 22),
+              SegmentedButton<bool>(
+                segments: const [
+                  ButtonSegment(value: false, label: Text('Monthly • PKR 499')),
+                  ButtonSegment(value: true, label: Text('Annual • PKR 3,999')),
+                ],
+                selected: {annual},
+                onSelectionChanged: (value) =>
+                    setState(() => annual = value.first),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                annual
+                    ? 'Demo selection • Save 33% label only'
+                    : 'Demo selection • Cancel anytime label only',
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 12, color: Colors.black54),
+              ),
+              const SizedBox(height: 18),
+              const SoftCard(
                 color: LifeColors.mint,
                 child: Column(
                   children: [

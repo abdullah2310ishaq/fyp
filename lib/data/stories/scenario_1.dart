@@ -76,12 +76,17 @@ final scenario1 = LifeScenario(
     ),
     node(
       's1_scene2',
-      StoryKind.dialogue,
+      StoryKind.choice,
       'Uncle Hamza visits. A welcome hug changes into a touch near a private area. He says, “This is how I show love.” You feel uncomfortable. The scene never shows the touch.',
       'انکل حمزہ آتے ہیں۔ خوش آمدیدی گلے کے بعد نجی حصے کے قریب لمس ہوتا ہے۔ وہ کہتے ہیں، “میں ایسے پیار کرتا ہوں۔” آپ بے آرام محسوس کرتے ہیں۔ منظر میں لمس نہیں دکھایا جاتا۔',
       speaker: narrator,
       scene: 'home',
       character: 'adult',
+      choices: [
+        yes('confused', 'Confused; I am not sure it was okay', 'الجھن؛ یقین نہیں یہ ٹھیک تھا'),
+        yes('scared', 'Uncomfortable and scared', 'بے آرام اور خوفزدہ'),
+        yes('elder', 'It felt wrong, but he is an elder', 'غلط لگا، مگر وہ بڑے ہیں'),
+      ],
       unscored: true,
       sourceRef: 'Scenario 01 Scene 2',
     ),

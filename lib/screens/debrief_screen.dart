@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import '../core/life_theme.dart';
-import '../data/scenario_data.dart';
+import '../data/expanded_scenarios.dart';
 import '../state/app_state.dart';
 import '../widgets/life_widgets.dart';
 
@@ -15,7 +15,7 @@ class DebriefScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final state = context.watch<AppState>();
-    final story = scenarios.firstWhere((item) => item.id == id);
+    final story = expandedScenarios.firstWhere((item) => item.id == id);
     final label = score >= 75
         ? 'Practised well'
         : score >= 50

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:lifeiq/data/scenario_data.dart';
+import 'package:lifeiq/data/expanded_scenarios.dart';
 import 'package:lifeiq/core/scenario_validator.dart';
 import 'package:lifeiq/models/story.dart';
 import 'package:lifeiq/state/app_state.dart';
@@ -12,8 +12,8 @@ void main() {
   setUp(() => SharedPreferences.setMockInitialValues({}));
 
   test('catalogue contains eight terminating bilingual stories', () {
-    expect(scenarios, hasLength(8));
-    for (final story in scenarios) {
+    expect(expandedScenarios, hasLength(8));
+    for (final story in expandedScenarios) {
       expect(story.title.en, isNotEmpty);
       expect(story.title.ur, isNotEmpty);
       expect(story.steps, isNotEmpty);
@@ -26,11 +26,11 @@ void main() {
   });
 
   test('complete catalogue passes schema and safety validation', () {
-    expect(validateCatalogue(scenarios), isEmpty);
+    expect(validateCatalogue(expandedScenarios), isEmpty);
   });
 
   test('only story one is free', () {
-    expect(scenarios.where((story) => story.isFree).map((story) => story.id), [
+    expect(expandedScenarios.where((story) => story.isFree).map((story) => story.id), [
       's1',
     ]);
   });
@@ -39,7 +39,9 @@ void main() {
     final state = AppState();
     await state.load();
     await state.startScenario('s1');
-    while (state.activeStep!.choices.every((item) => item.quality != ChoiceQuality.tryAgain)) {
+    while (state.activeStep!.choices.every(
+      (item) => item.quality != ChoiceQuality.tryAgain,
+    )) {
       await state.nextStep();
     }
     final choiceStep = state.activeStep!;
