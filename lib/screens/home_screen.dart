@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -28,13 +29,11 @@ class HomeScreen extends StatelessWidget {
                     Row(
                       children: [
                         CircleAvatar(
-                          radius: 27,
+                          radius: 23,
                           backgroundColor: LifeColors.yellow,
-                          child: Icon(
-                            state.avatar == 'girl'
-                                ? Icons.girl_rounded
-                                : Icons.boy_rounded,
-                            size: 38,
+                          child: const Icon(
+                            CupertinoIcons.person_crop_circle_fill,
+                            size: 32,
                             color: LifeColors.navy,
                           ),
                         ),
@@ -63,14 +62,14 @@ class HomeScreen extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 20),
                     Container(
-                      padding: const EdgeInsets.all(22),
+                      padding: const EdgeInsets.all(18),
                       decoration: BoxDecoration(
                         gradient: const LinearGradient(
                           colors: [LifeColors.teal, LifeColors.tealDark],
                         ),
-                        borderRadius: BorderRadius.circular(30),
+                        borderRadius: BorderRadius.circular(24),
                       ),
                       child: Row(
                         children: [
@@ -82,8 +81,11 @@ class HomeScreen extends StatelessWidget {
                                   ur
                                       ? 'دوست آپ کے ساتھ ہے'
                                       : 'Dost is here for you',
-                                  style: Theme.of(context).textTheme.titleLarge
-                                      ?.copyWith(color: Colors.white),
+                                  style: Theme.of(context).textTheme.titleMedium
+                                      ?.copyWith(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w800,
+                                      ),
                                 ),
                                 const SizedBox(height: 8),
                                 Text(
@@ -92,7 +94,7 @@ class HomeScreen extends StatelessWidget {
                                       : 'Practise safe choices in stories. Every try counts.',
                                   style: const TextStyle(
                                     color: Colors.white,
-                                    fontSize: 16,
+                                    fontSize: 14,
                                     height: 1.35,
                                   ),
                                 ),
@@ -101,11 +103,11 @@ class HomeScreen extends StatelessWidget {
                           ),
                           const SizedBox(width: 12),
                           const CircleAvatar(
-                            radius: 38,
+                            radius: 32,
                             backgroundColor: LifeColors.yellow,
                             child: Icon(
-                              Icons.auto_awesome_rounded,
-                              size: 42,
+                              CupertinoIcons.sparkles,
+                              size: 32,
                               color: LifeColors.navy,
                             ),
                           ),
@@ -119,8 +121,8 @@ class HomeScreen extends StatelessWidget {
                         child: Row(
                           children: [
                             const Icon(
-                              Icons.play_circle_fill_rounded,
-                              size: 42,
+                              CupertinoIcons.play_circle_fill,
+                              size: 38,
                               color: LifeColors.teal,
                             ),
                             const SizedBox(width: 14),
@@ -142,7 +144,9 @@ class HomeScreen extends StatelessWidget {
                             ),
                             IconButton(
                               onPressed: () => context.go('/story'),
-                              icon: const Icon(Icons.arrow_forward_rounded),
+                              icon: const Icon(
+                                CupertinoIcons.arrow_right_circle_fill,
+                              ),
                             ),
                           ],
                         ),
@@ -158,7 +162,7 @@ class HomeScreen extends StatelessWidget {
                           ),
                         ),
                         Pill(
-                          icon: Icons.local_fire_department_rounded,
+                          icon: CupertinoIcons.flame_fill,
                           label: '${state.streak} day',
                           color: const Color(0xFFFFE6D8),
                         ),
@@ -179,7 +183,7 @@ class HomeScreen extends StatelessWidget {
                       crossAxisCount: columns,
                       crossAxisSpacing: 14,
                       mainAxisSpacing: 14,
-                      childAspectRatio: columns == 2 ? .77 : .86,
+                      childAspectRatio: columns == 2 ? .82 : .9,
                     ),
                     itemCount: expandedScenarios.length,
                     itemBuilder: (context, index) => ScenarioCard(
@@ -213,12 +217,12 @@ class ScenarioCard extends StatelessWidget {
           '${story.title.get(state.isUrdu)}, ${locked ? 'locked' : 'available'}',
       child: InkWell(
         onTap: () => context.push('/intro/${story.id}'),
-        borderRadius: BorderRadius.circular(26),
+        borderRadius: BorderRadius.circular(22),
         child: Ink(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(26),
+            borderRadius: BorderRadius.circular(22),
             boxShadow: const [
               BoxShadow(
                 color: Color(0x1022304A),
@@ -230,28 +234,63 @@ class ScenarioCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  Container(
-                    width: 48,
-                    height: 48,
-                    decoration: BoxDecoration(
-                      color: story.color.withValues(alpha: .15),
-                      borderRadius: BorderRadius.circular(16),
+              if (story.coverImageAsset != null)
+                Stack(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(14),
+                      child: SizedBox(
+                        width: double.infinity,
+                        height: 76,
+                        child: Image.asset(
+                          story.coverImageAsset!,
+                          fit: BoxFit.cover,
+                          alignment: const Alignment(-.25, 0),
+                          errorBuilder: (_, _, _) => ColoredBox(
+                            color: story.color.withValues(alpha: .15),
+                            child: Icon(story.icon, color: story.color),
+                          ),
+                        ),
+                      ),
                     ),
-                    child: Icon(story.icon, color: story.color, size: 28),
-                  ),
-                  const Spacer(),
-                  if (locked)
-                    const Icon(Icons.lock_rounded, color: Colors.black45)
-                  else if (score != null)
-                    Pill(
-                      icon: Icons.star_rounded,
-                      label: '$score',
-                      color: LifeColors.mint,
+                    if (score != null)
+                      PositionedDirectional(
+                        top: 6,
+                        end: 6,
+                        child: Pill(
+                          icon: CupertinoIcons.star_fill,
+                          label: '$score',
+                          color: LifeColors.mint,
+                        ),
+                      ),
+                  ],
+                )
+              else
+                Row(
+                  children: [
+                    Container(
+                      width: 44,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        color: story.color.withValues(alpha: .15),
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      child: Icon(story.icon, color: story.color, size: 25),
                     ),
-                ],
-              ),
+                    const Spacer(),
+                    if (locked)
+                      const Icon(
+                        CupertinoIcons.lock_fill,
+                        color: Colors.black45,
+                      )
+                    else if (score != null)
+                      Pill(
+                        icon: CupertinoIcons.star_fill,
+                        label: '$score',
+                        color: LifeColors.mint,
+                      ),
+                  ],
+                ),
               const Spacer(),
               Text(
                 '${state.isUrdu ? 'کہانی' : 'Story'} $number',
@@ -266,7 +305,7 @@ class ScenarioCard extends StatelessWidget {
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
-                  fontSize: 18,
+                  fontSize: 16,
                   height: 1.12,
                   fontWeight: FontWeight.w900,
                 ),
@@ -292,35 +331,98 @@ class ScenarioCard extends StatelessWidget {
 class LifeNavigation extends StatelessWidget {
   const LifeNavigation({super.key, required this.index});
   final int index;
+
   @override
-  Widget build(BuildContext context) => NavigationBar(
-    selectedIndex: index,
-    onDestinationSelected: (value) {
-      if (value == index) return;
-      context.go(switch (value) {
-        0 => '/home',
-        1 => '/profile',
-        _ => '/settings',
-      });
-    },
-    destinations: const [
-      NavigationDestination(
-        icon: Icon(Icons.home_outlined),
-        selectedIcon: Icon(Icons.home_rounded),
-        label: 'Home',
+  Widget build(BuildContext context) {
+    const items = [
+      (CupertinoIcons.house, CupertinoIcons.house_fill, 'Home'),
+      (CupertinoIcons.chart_bar, CupertinoIcons.chart_bar_fill, 'Progress'),
+      (CupertinoIcons.gear, CupertinoIcons.gear_solid, 'Settings'),
+    ];
+    return SafeArea(
+      top: false,
+      minimum: const EdgeInsets.fromLTRB(16, 4, 16, 12),
+      child: Container(
+        height: 68,
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(34),
+          border: Border.all(color: const Color(0xFFE6EEEC)),
+          boxShadow: const [
+            BoxShadow(
+              color: Color(0x1C183A38),
+              blurRadius: 24,
+              offset: Offset(0, 10),
+            ),
+          ],
+        ),
+        child: Row(
+          children: List.generate(items.length, (itemIndex) {
+            final item = items[itemIndex];
+            final selected = itemIndex == index;
+            return Expanded(
+              child: Semantics(
+                button: true,
+                selected: selected,
+                label: item.$3,
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(26),
+                    onTap: () {
+                      if (selected) return;
+                      context.go(switch (itemIndex) {
+                        0 => '/home',
+                        1 => '/profile',
+                        _ => '/settings',
+                      });
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        AnimatedContainer(
+                          duration: const Duration(milliseconds: 180),
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: selected
+                                ? LifeColors.teal
+                                : Colors.transparent,
+                          ),
+                          child: Icon(
+                            selected ? item.$2 : item.$1,
+                            size: 21,
+                            color: selected ? Colors.white : Colors.black45,
+                          ),
+                        ),
+                        if (selected) ...[
+                          const SizedBox(width: 7),
+                          Flexible(
+                            child: Text(
+                              item.$3,
+                              overflow: TextOverflow.fade,
+                              softWrap: false,
+                              style: const TextStyle(
+                                color: LifeColors.navy,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }),
+        ),
       ),
-      NavigationDestination(
-        icon: Icon(Icons.emoji_events_outlined),
-        selectedIcon: Icon(Icons.emoji_events_rounded),
-        label: 'Progress',
-      ),
-      NavigationDestination(
-        icon: Icon(Icons.settings_outlined),
-        selectedIcon: Icon(Icons.settings_rounded),
-        label: 'Settings',
-      ),
-    ],
-  );
+    );
+  }
 }
 
 class ProfileScreen extends StatelessWidget {

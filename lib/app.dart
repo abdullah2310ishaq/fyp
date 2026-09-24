@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -56,6 +57,7 @@ class _LifeIqAppState extends State<LifeIqApp> {
       title: 'LifeIQ',
       debugShowCheckedModeBanner: false,
       theme: buildLifeTheme(),
+      themeMode: ThemeMode.light,
       locale: state.isUrdu ? const Locale('ur') : const Locale('en'),
       supportedLocales: const [Locale('en'), Locale('ur')],
       localizationsDelegates: const [
@@ -63,6 +65,10 @@ class _LifeIqAppState extends State<LifeIqApp> {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
+      builder: (context, child) => AnnotatedRegion<SystemUiOverlayStyle>(
+        value: lifeSystemUiOverlay,
+        child: child ?? const SizedBox.shrink(),
+      ),
       routerConfig: _router,
     );
   }

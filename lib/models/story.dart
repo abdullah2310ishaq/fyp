@@ -7,6 +7,7 @@ enum StoryKind {
   choice,
   multiChoice,
   feeling,
+  bodyMap,
   ranking,
   grounding,
   text,
@@ -45,6 +46,7 @@ class StoryStep {
     this.choices = const [],
     this.scene = 'home',
     this.character = 'guide',
+    this.imageAsset,
     this.acceptedChoiceIds = const [],
     this.dimension = 'safety',
     this.unscored = false,
@@ -57,6 +59,7 @@ class StoryStep {
   final List<StoryChoice> choices;
   final String scene;
   final String character;
+  final String? imageAsset;
   final List<String> acceptedChoiceIds;
   final String dimension;
   final bool unscored;
@@ -74,6 +77,7 @@ class LifeScenario {
     required this.color,
     required this.isFree,
     required this.steps,
+    this.coverImageAsset,
     this.weights = const {
       'safety': .3,
       'resilience': .2,
@@ -93,6 +97,7 @@ class LifeScenario {
   final Color color;
   final bool isFree;
   final List<StoryStep> steps;
+  final String? coverImageAsset;
   final Map<String, double> weights;
   final String badge;
   final List<String> badges;

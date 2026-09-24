@@ -7,6 +7,7 @@ import '../data/expanded_scenarios.dart';
 import '../models/story.dart';
 import '../state/app_state.dart';
 import '../widgets/life_widgets.dart';
+import '../widgets/body_safety_activity.dart';
 import '../widgets/typewriter_text.dart';
 
 class ScenarioIntroScreen extends StatelessWidget {
@@ -29,150 +30,156 @@ class ScenarioIntroScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: PageWidth(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Container(
-                height: 210,
-                decoration: BoxDecoration(
-                  color: story.color.withValues(alpha: .15),
-                  borderRadius: BorderRadius.circular(32),
-                ),
-                child: Stack(
-                  children: [
-                    Positioned(
-                      right: -20,
-                      top: -20,
-                      child: CircleAvatar(
-                        radius: 90,
-                        backgroundColor: story.color.withValues(alpha: .12),
-                      ),
-                    ),
-                    Center(
-                      child: Container(
-                        width: 112,
-                        height: 112,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(34),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Color(0x1522304A),
-                              blurRadius: 20,
-                              offset: Offset(0, 8),
-                            ),
-                          ],
+      body: SafeArea(
+        top: false,
+        child: SingleChildScrollView(
+          child: PageWidth(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Container(
+                  height: 210,
+                  decoration: BoxDecoration(
+                    color: story.color.withValues(alpha: .15),
+                    borderRadius: BorderRadius.circular(32),
+                  ),
+                  child: Stack(
+                    children: [
+                      Positioned(
+                        right: -20,
+                        top: -20,
+                        child: CircleAvatar(
+                          radius: 90,
+                          backgroundColor: story.color.withValues(alpha: .12),
                         ),
-                        child: Icon(story.icon, size: 62, color: story.color),
                       ),
-                    ),
-                    if (locked)
-                      const Positioned(
-                        right: 18,
-                        top: 18,
-                        child: Pill(icon: Icons.lock_rounded, label: 'Premium'),
+                      Center(
+                        child: Container(
+                          width: 112,
+                          height: 112,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(34),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Color(0x1522304A),
+                                blurRadius: 20,
+                                offset: Offset(0, 8),
+                              ),
+                            ],
+                          ),
+                          child: Icon(story.icon, size: 62, color: story.color),
+                        ),
                       ),
-                  ],
+                      if (locked)
+                        const Positioned(
+                          right: 18,
+                          top: 18,
+                          child: Pill(
+                            icon: Icons.lock_rounded,
+                            label: 'Premium',
+                          ),
+                        ),
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(height: 24),
-              Text(
-                story.category.get(ur),
-                style: TextStyle(
-                  color: story.color,
-                  fontWeight: FontWeight.w900,
-                  fontSize: 16,
+                const SizedBox(height: 24),
+                Text(
+                  story.category.get(ur),
+                  style: TextStyle(
+                    color: story.color,
+                    fontWeight: FontWeight.w900,
+                    fontSize: 16,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 6),
-              Text(
-                story.title.get(ur),
-                style: Theme.of(context).textTheme.headlineLarge,
-              ),
-              const SizedBox(height: 12),
-              Text(
-                story.description.get(ur),
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
-              const SizedBox(height: 24),
-              SoftCard(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      ur ? 'آپ مشق کریں گے' : 'You will practise',
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    const SizedBox(height: 12),
-                    ...story.practice.map(
-                      (item) => Padding(
-                        padding: const EdgeInsets.only(bottom: 10),
-                        child: Row(
-                          children: [
-                            const Icon(
-                              Icons.check_circle_rounded,
-                              color: LifeColors.green,
-                            ),
-                            const SizedBox(width: 10),
-                            Expanded(
-                              child: Text(
-                                item.get(ur),
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w700,
+                const SizedBox(height: 6),
+                Text(
+                  story.title.get(ur),
+                  style: Theme.of(context).textTheme.headlineLarge,
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  story.description.get(ur),
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
+                const SizedBox(height: 24),
+                SoftCard(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        ur ? 'آپ مشق کریں گے' : 'You will practise',
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                      const SizedBox(height: 12),
+                      ...story.practice.map(
+                        (item) => Padding(
+                          padding: const EdgeInsets.only(bottom: 10),
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.check_circle_rounded,
+                                color: LifeColors.green,
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Text(
+                                  item.get(ur),
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(height: 14),
-              SoftCard(
-                color: const Color(0xFFFFF0D4),
-                child: const Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Icon(Icons.favorite_rounded, color: LifeColors.coral),
-                    SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        'Try this story with a grown-up. You can pause, leave, or open Help at any time. This is practice—not a test of real-life safety.',
-                        style: TextStyle(fontWeight: FontWeight.w700),
+                const SizedBox(height: 14),
+                SoftCard(
+                  color: const Color(0xFFFFF0D4),
+                  child: const Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Icon(Icons.favorite_rounded, color: LifeColors.coral),
+                      SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          'Try this story with a grown-up. You can pause, leave, or open Help at any time. This is practice—not a test of real-life safety.',
+                          style: TextStyle(fontWeight: FontWeight.w700),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(height: 24),
-              FilledButton.icon(
-                onPressed: () async {
-                  if (locked) {
-                    context.push('/paywall');
-                    return;
-                  }
-                  await state.startScenario(story.id);
-                  if (context.mounted) context.go('/story');
-                },
-                icon: Icon(
-                  locked ? Icons.lock_open_rounded : Icons.play_arrow_rounded,
+                const SizedBox(height: 24),
+                FilledButton.icon(
+                  onPressed: () async {
+                    if (locked) {
+                      context.push('/paywall');
+                      return;
+                    }
+                    await state.startScenario(story.id);
+                    if (context.mounted) context.go('/story');
+                  },
+                  icon: Icon(
+                    locked ? Icons.lock_open_rounded : Icons.play_arrow_rounded,
+                  ),
+                  label: Text(
+                    locked
+                        ? 'Ask a grown-up to unlock'
+                        : (ur ? 'کہانی شروع کریں' : 'Start story'),
+                  ),
                 ),
-                label: Text(
-                  locked
-                      ? 'Ask a grown-up to unlock'
-                      : (ur ? 'کہانی شروع کریں' : 'Start story'),
+                TextButton.icon(
+                  onPressed: () => showHelpSheet(context),
+                  icon: const Icon(Icons.support_agent_rounded),
+                  label: Text(ur ? 'ابھی مدد چاہیے؟' : 'Need help now?'),
                 ),
-              ),
-              TextButton.icon(
-                onPressed: () => showHelpSheet(context),
-                icon: const Icon(Icons.support_agent_rounded),
-                label: Text(ur ? 'ابھی مدد چاہیے؟' : 'Need help now?'),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -289,6 +296,7 @@ class _SimulationScreenState extends State<SimulationScreen> {
                   scene: step.scene,
                   character: step.character,
                   speaker: step.speaker.get(ur),
+                  imageAsset: step.imageAsset,
                   reduceMotion: state.reduceMotion,
                 ),
                 const SizedBox(height: 12),
@@ -626,6 +634,14 @@ class _SimulationScreenState extends State<SimulationScreen> {
         ),
       ],
     ),
+    StoryKind.bodyMap => BodySafetyActivity(
+      isUrdu: state.isUrdu,
+      onComplete: (selectedIds, correct) => state.completeInteraction(
+        correct: correct,
+        interaction: 'bodyMap',
+        selectedIds: selectedIds,
+      ),
+    ),
     StoryKind.grounding => Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -863,141 +879,150 @@ class _PaywallScreenState extends State<PaywallScreen> {
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(title: const Text('Grown-up area')),
-    body: SingleChildScrollView(
-      child: PageWidth(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            if (!gatePassed) ...[
-              const Center(child: LifeLogo(size: 76)),
-              const SizedBox(height: 24),
-              Text(
-                'Ask a grown-up',
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.headlineLarge,
-              ),
-              const SizedBox(height: 10),
-              const Text(
-                'This simple check helps keep purchase-style controls away from children.',
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 24),
-              TextField(
-                controller: answer,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: 'What is 7 + 8?',
-                  prefixIcon: Icon(Icons.calculate_rounded),
+    body: SafeArea(
+      top: false,
+      child: SingleChildScrollView(
+        child: PageWidth(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              if (!gatePassed) ...[
+                const Center(child: LifeLogo(size: 76)),
+                const SizedBox(height: 24),
+                Text(
+                  'Ask a grown-up',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.headlineLarge,
                 ),
-              ),
-              const SizedBox(height: 14),
-              FilledButton(
-                onPressed: () {
-                  if (answer.text.trim() == '15') {
-                    setState(() => gatePassed = true);
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Please ask a grown-up to try again.'),
-                      ),
-                    );
-                  }
-                },
-                child: const Text('Continue'),
-              ),
-            ] else ...[
-              const Center(
-                child: CircleAvatar(
-                  radius: 43,
-                  backgroundColor: LifeColors.yellow,
-                  child: Icon(
-                    Icons.workspace_premium_rounded,
-                    size: 49,
-                    color: LifeColors.navy,
+                const SizedBox(height: 10),
+                const Text(
+                  'This simple check helps keep purchase-style controls away from children.',
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 24),
+                TextField(
+                  controller: answer,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    labelText: 'What is 7 + 8?',
+                    prefixIcon: Icon(Icons.calculate_rounded),
                   ),
                 ),
-              ),
-              const SizedBox(height: 18),
-              Text(
-                'Unlock every practice story',
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.headlineLarge,
-              ),
-              const SizedBox(height: 10),
-              const Text(
-                'This is a simulated subscription for the offline FYP demo. No payment or billing occurs.',
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 22),
-              SegmentedButton<bool>(
-                segments: const [
-                  ButtonSegment(value: false, label: Text('Monthly • PKR 499')),
-                  ButtonSegment(value: true, label: Text('Annual • PKR 3,999')),
-                ],
-                selected: {annual},
-                onSelectionChanged: (value) =>
-                    setState(() => annual = value.first),
-              ),
-              const SizedBox(height: 12),
-              Text(
-                annual
-                    ? 'Demo selection • Save 33% label only'
-                    : 'Demo selection • Cancel anytime label only',
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 12, color: Colors.black54),
-              ),
-              const SizedBox(height: 18),
-              const SoftCard(
-                color: LifeColors.mint,
-                child: Column(
-                  children: [
-                    _Feature(
-                      icon: Icons.menu_book_rounded,
-                      text: 'All 8 safety stories',
+                const SizedBox(height: 14),
+                FilledButton(
+                  onPressed: () {
+                    if (answer.text.trim() == '15') {
+                      setState(() => gatePassed = true);
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Please ask a grown-up to try again.'),
+                        ),
+                      );
+                    }
+                  },
+                  child: const Text('Continue'),
+                ),
+              ] else ...[
+                const Center(
+                  child: CircleAvatar(
+                    radius: 43,
+                    backgroundColor: LifeColors.yellow,
+                    child: Icon(
+                      Icons.workspace_premium_rounded,
+                      size: 49,
+                      color: LifeColors.navy,
                     ),
-                    _Feature(
-                      icon: Icons.translate_rounded,
-                      text: 'English and Urdu mode',
+                  ),
+                ),
+                const SizedBox(height: 18),
+                Text(
+                  'Unlock every practice story',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.headlineLarge,
+                ),
+                const SizedBox(height: 10),
+                const Text(
+                  'This is a simulated subscription for the offline FYP demo. No payment or billing occurs.',
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 22),
+                SegmentedButton<bool>(
+                  segments: const [
+                    ButtonSegment(
+                      value: false,
+                      label: Text('Monthly • PKR 499'),
                     ),
-                    _Feature(
-                      icon: Icons.insights_rounded,
-                      text: 'Practice history and full breakdown',
-                    ),
-                    _Feature(
-                      icon: Icons.replay_rounded,
-                      text: 'Replay and improvement rewards',
+                    ButtonSegment(
+                      value: true,
+                      label: Text('Annual • PKR 3,999'),
                     ),
                   ],
+                  selected: {annual},
+                  onSelectionChanged: (value) =>
+                      setState(() => annual = value.first),
                 ),
-              ),
-              const SizedBox(height: 18),
-              FilledButton.icon(
-                onPressed: () async {
-                  await context.read<AppState>().activatePremium();
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text(
-                          'Premium demo activated — no charge made.',
-                        ),
+                const SizedBox(height: 12),
+                Text(
+                  annual
+                      ? 'Demo selection • Save 33% label only'
+                      : 'Demo selection • Cancel anytime label only',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 12, color: Colors.black54),
+                ),
+                const SizedBox(height: 18),
+                const SoftCard(
+                  color: LifeColors.mint,
+                  child: Column(
+                    children: [
+                      _Feature(
+                        icon: Icons.menu_book_rounded,
+                        text: 'All 8 safety stories',
                       ),
-                    );
-                    context.go('/home');
-                  }
-                },
-                icon: const Icon(Icons.lock_open_rounded),
-                label: const Text('Activate premium demo'),
-              ),
-              TextButton(
-                onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Demo restore: no real purchase found.'),
+                      _Feature(
+                        icon: Icons.translate_rounded,
+                        text: 'English and Urdu mode',
+                      ),
+                      _Feature(
+                        icon: Icons.insights_rounded,
+                        text: 'Practice history and full breakdown',
+                      ),
+                      _Feature(
+                        icon: Icons.replay_rounded,
+                        text: 'Replay and improvement rewards',
+                      ),
+                    ],
                   ),
                 ),
-                child: const Text('Restore demo purchase'),
-              ),
+                const SizedBox(height: 18),
+                FilledButton.icon(
+                  onPressed: () async {
+                    await context.read<AppState>().activatePremium();
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text(
+                            'Premium demo activated — no charge made.',
+                          ),
+                        ),
+                      );
+                      context.go('/home');
+                    }
+                  },
+                  icon: const Icon(Icons.lock_open_rounded),
+                  label: const Text('Activate premium demo'),
+                ),
+                TextButton(
+                  onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Demo restore: no real purchase found.'),
+                    ),
+                  ),
+                  child: const Text('Restore demo purchase'),
+                ),
+              ],
             ],
-          ],
+          ),
         ),
       ),
     ),

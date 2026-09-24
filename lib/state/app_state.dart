@@ -61,7 +61,7 @@ class AppState extends ChangeNotifier {
     onboardingComplete = _prefs!.getBool('onboarding') ?? false;
     profileComplete = _prefs!.getBool('profile') ?? false;
     childName = _prefs!.getString('childName') ?? 'Ayaan';
-    childAge = _prefs!.getInt('childAge') ?? 10;
+    childAge = _readSavedAge(_prefs!.get('childAge'));
     avatar = _prefs!.getString('avatar') ?? 'boy';
     isUrdu = _prefs!.getBool('urdu') ?? false;
     soundOn = _prefs!.getBool('sound') ?? true;
@@ -130,7 +130,7 @@ class AppState extends ChangeNotifier {
 
   Future<void> saveProfile(String name, int age, String selectedAvatar) async {
     childName = name.trim().isEmpty ? 'Ayaan' : name.trim();
-    childAge = age;
+    childAge = age.clamp(6, 15);
     avatar = selectedAvatar;
     profileComplete = true;
     await _save();
@@ -553,5 +553,15 @@ class AppState extends ChangeNotifier {
       streak = 1;
     }
     lastCompletionDay = todayKey;
+  }
+
+  int _readSavedAge(Object? value) {
+    final parsed = switch (value) {
+      int number => number,
+      double number => number.round(),
+      String text => int.tryParse(text.trim()) ?? 10,
+      _ => 10,
+    };
+    return parsed.clamp(6, 15);
   }
 }

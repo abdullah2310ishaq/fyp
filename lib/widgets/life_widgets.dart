@@ -109,11 +109,13 @@ class StoryStage extends StatefulWidget {
     required this.scene,
     required this.character,
     required this.speaker,
+    this.imageAsset,
     this.reduceMotion = false,
   });
   final String scene;
   final String character;
   final String speaker;
+  final String? imageAsset;
   final bool reduceMotion;
 
   @override
@@ -162,16 +164,23 @@ class _StoryStageState extends State<StoryStage>
       child: ClipRRect(
         borderRadius: BorderRadius.circular(28),
         child: AspectRatio(
-          aspectRatio: 16 / 10,
-          child: CustomPaint(
-            painter: _StoryPainter(
-              scene: widget.scene,
-              character: widget.character,
-            ),
-          ),
+          aspectRatio: 3 / 2,
+          child: widget.imageAsset == null
+              ? _paintedFallback()
+              : Image.asset(
+                  widget.imageAsset!,
+                  fit: BoxFit.cover,
+                  alignment: Alignment.center,
+                  filterQuality: FilterQuality.medium,
+                  errorBuilder: (_, _, _) => _paintedFallback(),
+                ),
         ),
       ),
     ),
+  );
+
+  Widget _paintedFallback() => CustomPaint(
+    painter: _StoryPainter(scene: widget.scene, character: widget.character),
   );
 }
 

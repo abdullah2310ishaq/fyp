@@ -3,6 +3,18 @@ import 'package:flutter/material.dart';
 import '../../models/story.dart';
 import '../story_builders.dart';
 
+const _introArt = 'assets/scenarios/s1/s1_intro.jpg';
+const _boundaryArt = 'assets/scenarios/s1/s1_boundary.jpg';
+const _teachingArt = 'assets/scenarios/s1/s1_teaching.jpg';
+const _feelingsArt = 'assets/scenarios/s1/s1_feelings.jpg';
+const _trustedHelpersArt = 'assets/scenarios/s1/s1_trusted_helpers.jpg';
+const _trustedAdultArt = 'assets/scenarios/s1/s1_trusted_adult.jpg';
+const _protectiveCallArt = 'assets/scenarios/s1/s1_protective_call.jpg';
+const _secretArt = 'assets/scenarios/s1/s1_secret.jpg';
+const _approachAmmiArt = 'assets/scenarios/s1/s1_approach_ammi.jpg';
+const _comfortArt = 'assets/scenarios/s1/s1_comfort.jpg';
+const _hopefulFinalArt = 'assets/scenarios/s1/s1_hopeful_final.jpg';
+
 final scenario1 = LifeScenario(
   id: 's1',
   title: t('My Body, My Rules', 'میرا جسم، میرے اصول'),
@@ -19,6 +31,7 @@ final scenario1 = LifeScenario(
   icon: Icons.health_and_safety_rounded,
   color: const Color(0xFF2A9D8F),
   isFree: true,
+  coverImageAsset: _introArt,
   weights: const {'safety': .5, 'resilience': .2, 'communication': .3},
   badge: 'Brave Voice',
   badges: const ['Brave Voice', 'Trusted Adult Finder', 'Body Safety Star'],
@@ -50,6 +63,7 @@ final scenario1 = LifeScenario(
           'میں نے جسمانی حفاظت سیکھی ہے',
         ),
       ],
+      imageAsset: _introArt,
       unscored: true,
       sourceRef: 'Scenario 01 checklist',
     ),
@@ -71,6 +85,7 @@ final scenario1 = LifeScenario(
           'شاید، مگر انہوں نے اسے معمول کہا',
         ),
       ],
+      imageAsset: _introArt,
       dimension: 'communication',
       unscored: true,
       sourceRef: 'Scenario 01 Scene 1',
@@ -83,6 +98,7 @@ final scenario1 = LifeScenario(
       speaker: narrator,
       scene: 'home',
       character: 'adult',
+      imageAsset: _boundaryArt,
       choices: [
         yes(
           'confused',
@@ -104,13 +120,24 @@ final scenario1 = LifeScenario(
       StoryKind.info,
       'Your body belongs to you. A wanted handshake, pat, or hug can feel safe. A touch that feels confusing, scary, secret, or involves swimsuit-covered parts is unsafe. A doctor only checks with a parent present.',
       'آپ کا جسم آپ کا ہے۔ رضامندی والا ہاتھ ملانا، تھپکی یا گلے ملنا محفوظ ہو سکتا ہے۔ الجھن، خوف، راز یا سوئمنگ سوٹ سے ڈھکے حصوں کا لمس غیر محفوظ ہے۔ ڈاکٹر صرف والدین کی موجودگی میں معائنہ کرتا ہے۔',
+      imageAsset: _teachingArt,
       sourceRef: 'Scenario 01 Scene 3',
+    ),
+    node(
+      's1_body_map',
+      StoryKind.bodyMap,
+      'Tap the places described in the story: the shoulder or back and the swimsuit-covered area. Then decide whether the whole situation was safe, unsafe, or confusing.',
+      'کہانی میں بیان کیے گئے حصوں کو دبائیں: کندھا یا کمر اور سوئمنگ سوٹ سے ڈھکا حصہ۔ پھر بتائیں کہ پوری صورتحال محفوظ، غیر محفوظ یا الجھن والی تھی۔',
+      imageAsset: _teachingArt,
+      dimension: 'safety',
+      sourceRef: 'Scenario 01 body-safety recognition activity',
     ),
     node(
       's1_scene4',
       StoryKind.feeling,
       'Move the slider to show how the situation felt. Safe, confused, or scared—every feeling is valid and is never scored.',
       'سلائیڈر سے بتائیں صورتحال کیسی لگی۔ محفوظ، الجھن یا خوف—ہر احساس درست ہے اور اس پر نمبر نہیں۔',
+      imageAsset: _feelingsArt,
       unscored: true,
       dimension: 'emotional',
       sourceRef: 'Scenario 01 Scene 4',
@@ -141,6 +168,7 @@ final scenario1 = LifeScenario(
           'آپ ابھی حفاظت کے حقدار ہیں۔ دور جائیں اور بتائیں۔',
         ),
       ],
+      imageAsset: _secretArt,
       dimension: 'safety',
       sourceRef: 'Scenario 01 Scene 5',
     ),
@@ -162,6 +190,7 @@ final scenario1 = LifeScenario(
         ),
       ],
       accepted: ['parent', 'teacher', 'sibling', 'friend'],
+      imageAsset: _trustedHelpersArt,
       dimension: 'social',
       sourceRef: 'Scenario 01 Scene 6',
     ),
@@ -172,6 +201,7 @@ final scenario1 = LifeScenario(
       'امی کہتی ہیں، “آپ پریشان لگتے ہیں۔ مجھے سب بتا سکتے ہیں۔” نام، واقعہ اور احساس بتانے کی مشق کریں۔ لکھیں یا ڈیمو عبارت استعمال کریں؛ آواز ریکارڈ نہیں ہوتی۔',
       scene: 'home',
       character: 'parent',
+      imageAsset: _approachAmmiArt,
       dimension: 'communication',
       sourceRef: 'Scenario 01 Scene 7',
     ),
@@ -182,7 +212,18 @@ final scenario1 = LifeScenario(
       'امی یقین کرتی ہیں: “بتانے کا شکریہ۔ یہ غلط تھا اور آپ کی ذرا بھی غلطی نہیں۔ میں آپ کو محفوظ رکھوں گی۔” اگر ایک بڑا نہ سنے تو دوسرے کو بتائیں۔',
       scene: 'home',
       character: 'parent',
+      imageAsset: _trustedAdultArt,
       sourceRef: 'Scenario 01 Scene 8',
+    ),
+    node(
+      's1_scene8_comfort',
+      StoryKind.info,
+      'Ammi stays close and offers comfort that you want. Safe comfort feels caring, is never secret, and can stop whenever you want.',
+      'امی قریب رہتی ہیں اور ایسا دلاسہ دیتی ہیں جو آپ چاہتے ہیں۔ محفوظ دلاسہ خیال رکھنے والا ہوتا ہے، کبھی راز نہیں ہوتا، اور آپ جب چاہیں اسے روک سکتے ہیں۔',
+      scene: 'home',
+      character: 'parent',
+      imageAsset: _comfortArt,
+      sourceRef: 'Scenario 01 trusted-adult comfort extension',
     ),
     node(
       's1_scene9',
@@ -210,6 +251,7 @@ final scenario1 = LifeScenario(
           'خاموشی غیر محفوظ شخص کو بچاتی ہے، بچے کو نہیں۔',
         ),
       ],
+      imageAsset: _protectiveCallArt,
       dimension: 'safety',
       sourceRef: 'Scenario 01 Scene 9',
     ),
@@ -218,6 +260,7 @@ final scenario1 = LifeScenario(
       StoryKind.terminal,
       'Remember: your body belongs to you; “no” applies even with elders; move away; and always tell a trusted adult. Unsafe touch is never your fault.',
       'یاد رکھیں: آپ کا جسم آپ کا ہے؛ بڑوں کو بھی “نہیں” کہہ سکتے ہیں؛ دور جائیں؛ اور قابلِ اعتماد بڑے کو ضرور بتائیں۔ غیر محفوظ لمس آپ کی غلطی نہیں۔',
+      imageAsset: _hopefulFinalArt,
       sourceRef: 'Scenario 01 Scene 10',
     ),
   ],

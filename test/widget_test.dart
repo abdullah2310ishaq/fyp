@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lifeiq/data/expanded_scenarios.dart';
 import 'package:lifeiq/core/scenario_validator.dart';
 import 'package:lifeiq/models/story.dart';
+import 'package:lifeiq/screens/home_screen.dart';
+import 'package:lifeiq/screens/onboarding_screens.dart';
 import 'package:lifeiq/state/app_state.dart';
 import 'package:lifeiq/widgets/life_widgets.dart';
+import 'package:lifeiq/widgets/body_safety_activity.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -34,7 +40,7 @@ void main() {
     expect(
       {for (final story in expandedScenarios) story.id: story.steps.length},
       {
-        's1': 11,
+        's1': 13,
         's2': 13,
         's3': 13,
         's4': 14,
@@ -73,6 +79,27 @@ void main() {
       expandedScenarios.where((story) => story.isFree).map((story) => story.id),
       ['s1'],
     );
+  });
+
+  test('scenario one has generated artwork mapped to every step', () {
+    final story = expandedScenarios.firstWhere((item) => item.id == 's1');
+    expect(story.steps.every((step) => step.imageAsset != null), isTrue);
+    expect(story.steps.map((step) => step.imageAsset).toSet(), hasLength(11));
+    expect(story.coverImageAsset, isNotNull);
+  });
+
+  test('every scenario one illustration is bundled and non-empty', () async {
+    final story = expandedScenarios.firstWhere((item) => item.id == 's1');
+    final assets = {
+      ...story.steps.map((step) => step.imageAsset!),
+      story.coverImageAsset!,
+      'assets/scenarios/s1/s1_body_map.png',
+    };
+
+    for (final asset in assets) {
+      final data = await rootBundle.load(asset);
+      expect(data.lengthInBytes, greaterThan(0), reason: asset);
+    }
   });
 
   test('unsafe choice coaches and safe choice advances', () async {
@@ -161,6 +188,16 @@ void main() {
     );
   });
 
+  test('legacy string age is migrated to a safe integer', () async {
+    SharedPreferences.setMockInitialValues({'childAge': '12'});
+    final state = AppState();
+
+    await state.load();
+
+    expect(state.childAge, 12);
+    expect(state.childAge, isA<int>());
+  });
+
   testWidgets('visual stage has an accessible scene label', (tester) async {
     await tester.pumpWidget(
       const MaterialApp(
@@ -178,5 +215,128 @@ void main() {
       find.bySemanticsLabel('school scene with Dost speaking'),
       findsOneWidget,
     );
+  });
+
+  testWidgets('OTP sheet closes before auth navigation replaces the page', (
+    tester,
+  ) async {
+    final router = GoRouter(
+      initialLocation: '/auth',
+      routes: [
+        GoRoute(path: '/auth', builder: (_, _) => const AuthScreen()),
+        GoRoute(
+          path: '/profile-setup',
+          builder: (_, _) => const Scaffold(body: Text('Profile setup')),
+        ),
+      ],
+    );
+    addTearDown(router.dispose);
+
+    await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+    await tester.tap(find.text('Create demo account'));
+    await tester.pumpAndSettle();
+    expect(find.text('Verify this grown-up'), findsOneWidget);
+
+    await tester.tap(find.text('Verify demo code'));
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+    expect(find.text('Profile setup'), findsOneWidget);
+  });
+
+  testWidgets('profile age text is converted and saved as an integer', (
+    tester,
+  ) async {
+    final state = AppState();
+    await state.load();
+    final router = GoRouter(
+      initialLocation: '/profile-setup',
+      routes: [
+        GoRoute(
+          path: '/profile-setup',
+          builder: (_, _) => const ProfileSetupScreen(),
+        ),
+        GoRoute(
+          path: '/home',
+          builder: (_, _) => const Scaffold(body: Text('Home')),
+        ),
+      ],
+    );
+    addTearDown(router.dispose);
+
+    await tester.pumpWidget(
+      ChangeNotifierProvider.value(
+        value: state,
+        child: MaterialApp.router(routerConfig: router),
+      ),
+    );
+    await tester.enterText(find.byKey(const Key('profile-age-field')), '12');
+    final submitButton = find.text('Meet Dost');
+    await tester.ensureVisible(submitButton);
+    await tester.tap(submitButton);
+    await tester.pumpAndSettle();
+
+    expect(state.childAge, 12);
+    expect(state.childAge, isA<int>());
+    expect(find.text('Home'), findsOneWidget);
+  });
+
+  testWidgets('home story card renders scenario artwork without overflow', (
+    tester,
+  ) async {
+    final state = AppState();
+    await state.load();
+    await tester.pumpWidget(
+      ChangeNotifierProvider.value(
+        value: state,
+        child: const MaterialApp(home: HomeScreen()),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.byType(Image), findsWidgets);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('body map recognises the story zones as unsafe', (tester) async {
+    List<String>? answer;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: BodySafetyActivity(
+              isUrdu: false,
+              onComplete: (selectedIds, _) async => answer = selectedIds,
+            ),
+          ),
+        ),
+      ),
+    );
+
+    final headZone = find.byKey(const Key('body-zone-head_face'));
+    await tester.ensureVisible(headZone);
+    await tester.tap(headZone);
+    await tester.pump();
+    final shoulderZone = find.byKey(const Key('body-zone-shoulder_back'));
+    await tester.ensureVisible(shoulderZone);
+    await tester.tap(shoulderZone);
+    await tester.pump();
+    final swimsuitZone = find.byKey(const Key('body-zone-swimsuit_area'));
+    await tester.ensureVisible(swimsuitZone);
+    await tester.tap(swimsuitZone);
+    await tester.pump();
+    await tester.ensureVisible(find.byKey(const Key('body-judgement-unsafe')));
+    await tester.tap(find.byKey(const Key('body-judgement-unsafe')));
+    await tester.pump();
+    await tester.ensureVisible(find.byKey(const Key('body-map-submit')));
+    await tester.tap(find.byKey(const Key('body-map-submit')));
+    await tester.pumpAndSettle();
+
+    expect(
+      answer,
+      containsAll(['head_face', 'shoulder_back', 'swimsuit_area']),
+    );
+    expect(answer, contains('judgement:unsafe'));
+    expect(tester.takeException(), isNull);
   });
 }

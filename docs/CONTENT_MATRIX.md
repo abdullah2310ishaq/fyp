@@ -10,11 +10,13 @@ This matrix is the implementation audit for `LifeIQ_Cursor_Master_Spec.md`, `Lif
 | Scene 1 guide disclosure prompt | `s1_scene1` | accepted choice | unscored |
 | Scene 2 non-graphic situation | `s1_scene2` | dialogue | unscored |
 | Scene 3 body-safety teaching | `s1_scene3` | info | unscored |
+| Body-zone recognition extension | `s1_body_map` | tappable full-body map | safety |
 | Scene 4 feelings | `s1_scene4` | slider | unscored |
 | Scene 5 unsafe-secret decision | `s1_scene5` | coached critical choice | safety |
 | Scene 6 trusted adults | `s1_scene6` | accessible reorder | social |
 | Scene 7 telling Ammi | `s1_scene7` | mock voice/text | communication |
 | Scene 8 adult response | `s1_scene8` | info | unscored |
+| Scene 8 wanted comfort extension | `s1_scene8_comfort` | info | unscored |
 | Scene 9 next protection step | `s1_scene9` | coached critical choice | safety |
 | Scene 10 rules/debrief | `s1_scene10` | terminal | result |
 
