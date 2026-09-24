@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "fossui": {
+      "source": "fossui/ai",
+      "sourceType": "github",
+      "skillPath": "skill/fossui/SKILL.md",
+      "computedHash": "948ddf5e8e7e4a62fca31192fe9ce3958a52de9c9ef969272736270812b6cd4f"
+    }
+  }
+}
