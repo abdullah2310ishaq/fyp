@@ -7,8 +7,6 @@ plugins {
     id("com.android.application")
     id("kotlin-android")
     id("dev.flutter.flutter-gradle-plugin")
-    id("com.google.gms.google-services")
-    id("com.google.firebase.crashlytics")
 }
 
 val keystoreProperties = Properties()
@@ -18,7 +16,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 extensions.configure<ApplicationExtension> {
-    namespace = "com.smartspend.expensemanager.app"
+    namespace = "com.fyp.lifeiq"
     compileSdk = maxOf(flutter.compileSdkVersion, 36)
     ndkVersion = flutter.ndkVersion
 
@@ -29,7 +27,7 @@ extensions.configure<ApplicationExtension> {
     }
 
     defaultConfig {
-        applicationId = "com.smartspend.expensemanager.app"
+        applicationId = "com.fyp.lifeiq"
         minSdk = maxOf(flutter.minSdkVersion, 23)
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode

@@ -1,5 +1,17 @@
-SmartSpend
+# LifeIQ
 
-Android personal finance app. Offline-first. Shows how much you can safely spend today, days to payday, and money across cash, bank, JazzCash, Easypaisa, and card. Log in one line or by voice. Optional AI chat (Groq, Gemini, OpenAI, with fallback). English and Urdu. Light and dark.
+LifeIQ is a fully offline Flutter visual-novel prototype that helps children aged 6–15 practise safe choices with a friendly guide named Dost.
 
-Stack: Flutter, Material 3, ScreenUtil, GoRouter, Cubit, get_it, Hive, SharedPreferences, local notifications, PIN and fingerprint lock, fl_chart, CSV / PDF / Excel export, Firebase (anonymous auth, Firestore, Crashlytics, Analytics).
+## Run
+
+```bash
+flutter pub get
+flutter run
+```
+
+Demo OTP: `1234`  
+Parent gate answer: `15`
+
+The app has no backend, network dependency, real authentication, voice recording, payment, or AI. All profiles, subscriptions, stories, scores, coins and badges are simulated locally with `shared_preferences`.
+
+See [docs/IMPLEMENTATION_PHASES.md](docs/IMPLEMENTATION_PHASES.md) for phase status and production follow-ups.
