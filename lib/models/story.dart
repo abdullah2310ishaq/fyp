@@ -1,6 +1,18 @@
 import 'package:flutter/material.dart';
 
-enum StoryKind { dialogue, info, choice, feeling, ranking, text, terminal }
+enum StoryKind {
+  dialogue,
+  info,
+  checklist,
+  choice,
+  multiChoice,
+  feeling,
+  ranking,
+  grounding,
+  text,
+  mockVoice,
+  terminal,
+}
 
 enum ChoiceQuality { best, okay, tryAgain }
 
@@ -33,6 +45,10 @@ class StoryStep {
     this.choices = const [],
     this.scene = 'home',
     this.character = 'guide',
+    this.acceptedChoiceIds = const [],
+    this.dimension = 'safety',
+    this.unscored = false,
+    this.sourceRef,
   });
   final String id;
   final StoryKind kind;
@@ -41,6 +57,10 @@ class StoryStep {
   final List<StoryChoice> choices;
   final String scene;
   final String character;
+  final List<String> acceptedChoiceIds;
+  final String dimension;
+  final bool unscored;
+  final String? sourceRef;
 }
 
 class LifeScenario {
@@ -54,6 +74,14 @@ class LifeScenario {
     required this.color,
     required this.isFree,
     required this.steps,
+    this.weights = const {
+      'safety': .3,
+      'resilience': .2,
+      'social': .2,
+      'communication': .2,
+      'emotional': .1,
+    },
+    this.badge = 'Safety Star',
   });
   final String id;
   final LocalText title;
@@ -64,4 +92,6 @@ class LifeScenario {
   final Color color;
   final bool isFree;
   final List<StoryStep> steps;
+  final Map<String, double> weights;
+  final String badge;
 }

@@ -22,6 +22,20 @@ class ScenarioIntroScreen extends StatelessWidget {
       appBar: AppBar(
         actions: [
           IconButton(
+            tooltip: 'Hint — 10 coins',
+            onPressed: () async {
+              final message = await state.useHint();
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+              }
+            },
+            icon: Badge(
+              label: Text('${3 - state.hintsUsed}'),
+              isLabelVisible: state.isPremium,
+              child: const Icon(Icons.lightbulb_outline_rounded),
+            ),
+          ),
+          IconButton(
             tooltip: 'Get help',
             onPressed: () => showHelpSheet(context),
             icon: const Icon(Icons.help_outline_rounded),
@@ -187,6 +201,12 @@ class SimulationScreen extends StatefulWidget {
 
 class _SimulationScreenState extends State<SimulationScreen> {
   final textController = TextEditingController();
+  final Set<String> selectedIds = {};
+  List<StoryChoice> rankedChoices = [];
+  String? interactionStepId;
+  String? localFeedback;
+  int groundingTaps = 0;
+  bool listening = false;
   @override
   void dispose() {
     textController.dispose();
@@ -207,6 +227,15 @@ class _SimulationScreenState extends State<SimulationScreen> {
           ),
         ),
       );
+    }
+    if (interactionStepId != step.id) {
+      interactionStepId = step.id;
+      selectedIds.clear();
+      rankedChoices = List.of(step.choices);
+      textController.clear();
+      localFeedback = null;
+      groundingTaps = 0;
+      listening = false;
     }
     final ur = state.isUrdu;
     final progress = (state.activeStepIndex + 1) / story.steps.length;
@@ -309,6 +338,8 @@ class _SimulationScreenState extends State<SimulationScreen> {
                 if (state.coaching != null)
                   _CoachingCard(text: state.coaching!),
                 if (state.coaching != null) const SizedBox(height: 12),
+                if (localFeedback != null) _CoachingCard(text: localFeedback!),
+                if (localFeedback != null) const SizedBox(height: 12),
                 _interaction(context, state, story, step),
               ],
             ),
@@ -324,7 +355,7 @@ class _SimulationScreenState extends State<SimulationScreen> {
     LifeScenario story,
     StoryStep step,
   ) => switch (step.kind) {
-    StoryKind.choice || StoryKind.ranking => Column(
+    StoryKind.choice => Column(
       children: step.choices.map((choice) {
         final disabled = state.disabledChoices.contains(choice.id);
         return Padding(
@@ -353,6 +384,178 @@ class _SimulationScreenState extends State<SimulationScreen> {
           ),
         );
       }).toList(),
+    ),
+    StoryKind.checklist => Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        ...step.choices.map(
+          (choice) => Padding(
+            padding: const EdgeInsets.only(bottom: 9),
+            child: CheckboxListTile(
+              value: selectedIds.contains(choice.id),
+              onChanged: (value) => setState(() {
+                value == true
+                    ? selectedIds.add(choice.id)
+                    : selectedIds.remove(choice.id);
+              }),
+              title: Text(
+                choice.text.get(state.isUrdu),
+                style: const TextStyle(fontWeight: FontWeight.w700),
+              ),
+              subtitle: Text(
+                state.isUrdu
+                    ? 'نہیں معلوم ہو تو خالی چھوڑ دیں'
+                    : 'Leave unticked if you are not sure',
+              ),
+              tileColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(18),
+              ),
+              controlAffinity: ListTileControlAffinity.leading,
+            ),
+          ),
+        ),
+        FilledButton(
+          onPressed: state.nextStep,
+          child: Text(
+            state.isUrdu
+                ? 'ہر جواب قبول ہے — جاری رکھیں'
+                : 'Every answer is okay — continue',
+          ),
+        ),
+      ],
+    ),
+    StoryKind.multiChoice => Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        ...step.choices.map(
+          (choice) => Padding(
+            padding: const EdgeInsets.only(bottom: 9),
+            child: CheckboxListTile(
+              value: selectedIds.contains(choice.id),
+              onChanged: (value) => setState(() {
+                value == true
+                    ? selectedIds.add(choice.id)
+                    : selectedIds.remove(choice.id);
+                localFeedback = null;
+              }),
+              title: Text(
+                choice.text.get(state.isUrdu),
+                style: const TextStyle(fontWeight: FontWeight.w700),
+              ),
+              tileColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(18),
+              ),
+            ),
+          ),
+        ),
+        FilledButton.icon(
+          onPressed: selectedIds.isEmpty
+              ? null
+              : () async {
+                  final expected = step.acceptedChoiceIds.toSet();
+                  final correct =
+                      selectedIds.length == expected.length &&
+                      selectedIds.containsAll(expected);
+                  if (!correct) {
+                    setState(
+                      () => localFeedback = state.isUrdu
+                          ? 'اچھی کوشش۔ مکمل محفوظ منصوبے کے لیے انتخاب دوبارہ دیکھیں۔'
+                          : 'Good thinking. Review the choices once more for the complete safety plan.',
+                    );
+                    return;
+                  }
+                  await state.completeInteraction(correct: true);
+                },
+          icon: const Icon(Icons.fact_check_rounded),
+          label: Text(state.isUrdu ? 'انتخاب چیک کریں' : 'Check my choices'),
+        ),
+      ],
+    ),
+    StoryKind.ranking => Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        ReorderableListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: rankedChoices.length,
+          onReorderItem: (oldIndex, newIndex) => setState(() {
+            final item = rankedChoices.removeAt(oldIndex);
+            rankedChoices.insert(newIndex, item);
+            localFeedback = null;
+          }),
+          itemBuilder: (context, index) {
+            final choice = rankedChoices[index];
+            return Container(
+              key: ValueKey(choice.id),
+              margin: const EdgeInsets.only(bottom: 8),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(18),
+              ),
+              child: ListTile(
+                leading: CircleAvatar(
+                  backgroundColor: LifeColors.mint,
+                  child: Text(
+                    '${index + 1}',
+                    style: const TextStyle(fontWeight: FontWeight.w900),
+                  ),
+                ),
+                title: Text(
+                  choice.text.get(state.isUrdu),
+                  style: const TextStyle(fontWeight: FontWeight.w700),
+                ),
+                trailing: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      tooltip: 'Move up',
+                      onPressed: index == 0
+                          ? null
+                          : () => setState(() {
+                              final item = rankedChoices.removeAt(index);
+                              rankedChoices.insert(index - 1, item);
+                            }),
+                      icon: const Icon(Icons.arrow_upward_rounded),
+                    ),
+                    const Icon(Icons.drag_handle_rounded),
+                    IconButton(
+                      tooltip: 'Move down',
+                      onPressed: index == rankedChoices.length - 1
+                          ? null
+                          : () => setState(() {
+                              final item = rankedChoices.removeAt(index);
+                              rankedChoices.insert(index + 1, item);
+                            }),
+                      icon: const Icon(Icons.arrow_downward_rounded),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        ),
+        const SizedBox(height: 8),
+        FilledButton.icon(
+          onPressed: () async {
+            final actual = rankedChoices.map((item) => item.id).toList();
+            final correct =
+                actual.join('|') == step.acceptedChoiceIds.join('|');
+            if (!correct) {
+              setState(
+                () => localFeedback = state.isUrdu
+                    ? 'اچھی کوشش۔ سب سے پہلے قابلِ اعتماد مدد اور ثبوت، اور غیر محفوظ انتخاب آخر میں رکھیں۔'
+                    : 'Good try. Put trusted support and evidence first, and the unsafe option last.',
+              );
+              return;
+            }
+            await state.completeInteraction(correct: true);
+          },
+          icon: const Icon(Icons.sort_rounded),
+          label: Text(state.isUrdu ? 'ترتیب چیک کریں' : 'Check this order'),
+        ),
+      ],
     ),
     StoryKind.feeling => Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -383,9 +586,102 @@ class _SimulationScreenState extends State<SimulationScreen> {
         FilledButton(onPressed: state.nextStep, child: const Text('Continue')),
       ],
     ),
-    StoryKind.text => Column(
+    StoryKind.grounding => Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        SoftCard(
+          color: LifeColors.sky,
+          child: Column(
+            children: [
+              Text(
+                '${groundingTaps.clamp(0, 5)} / 5',
+                style: Theme.of(context).textTheme.headlineMedium,
+              ),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 9,
+                runSpacing: 9,
+                alignment: WrapAlignment.center,
+                children: List.generate(
+                  5,
+                  (index) => Semantics(
+                    button: true,
+                    label: 'Grounding point ${index + 1}',
+                    child: InkWell(
+                      onTap: index <= groundingTaps
+                          ? () => setState(() {
+                              if (groundingTaps < 5) groundingTaps += 1;
+                            })
+                          : null,
+                      borderRadius: BorderRadius.circular(99),
+                      child: CircleAvatar(
+                        radius: 27,
+                        backgroundColor: index < groundingTaps
+                            ? LifeColors.teal
+                            : Colors.white,
+                        child: Icon(
+                          index < groundingTaps
+                              ? Icons.check_rounded
+                              : Icons.touch_app_rounded,
+                          color: index < groundingTaps
+                              ? Colors.white
+                              : LifeColors.teal,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                state.isUrdu
+                    ? 'ہر نقطے پر آہستہ توجہ دیں۔ جلدی ضروری نہیں۔'
+                    : 'Notice each point slowly. There is no need to rush.',
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 12),
+        FilledButton(
+          onPressed: groundingTaps < 5 ? null : state.nextStep,
+          child: Text(
+            state.isUrdu ? 'مکمل — جاری رکھیں' : 'Finished — continue',
+          ),
+        ),
+      ],
+    ),
+    StoryKind.text || StoryKind.mockVoice => Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (step.kind == StoryKind.mockVoice && state.isPremium) ...[
+          FilledButton.tonalIcon(
+            onPressed: listening
+                ? null
+                : () async {
+                    setState(() => listening = true);
+                    await Future<void>.delayed(
+                      const Duration(milliseconds: 800),
+                    );
+                    if (!mounted) return;
+                    setState(() {
+                      listening = false;
+                      textController.text = state.isUrdu
+                          ? 'مجھے ایک غیر محفوظ بات بتانی ہے۔ براہِ کرم میری مدد کریں۔'
+                          : 'I need to tell you about something unsafe. Please help me.';
+                    });
+                  },
+            icon: Icon(
+              listening ? Icons.graphic_eq_rounded : Icons.mic_none_rounded,
+            ),
+            label: Text(
+              listening
+                  ? (state.isUrdu ? 'ڈیمو سن رہا ہے…' : 'Demo listening…')
+                  : (state.isUrdu ? 'ڈیمو آواز آزمائیں' : 'Try demo voice'),
+            ),
+          ),
+          const SizedBox(height: 10),
+        ],
         TextField(
           controller: textController,
           onChanged: (_) => setState(() {}),
@@ -406,12 +702,14 @@ class _SimulationScreenState extends State<SimulationScreen> {
         ),
         const SizedBox(height: 10),
         FilledButton(
-          onPressed: textController.text.trim().isEmpty ? null : state.nextStep,
+          onPressed: textController.text.trim().isEmpty
+              ? null
+              : () => state.completeInteraction(correct: true),
           child: const Text('Continue safely'),
         ),
         const SizedBox(height: 8),
         const Text(
-          'Demo only • No audio is recorded • Text stays on this screen',
+          'Demo transcript • No audio is recorded • Practice text is not saved',
           textAlign: TextAlign.center,
           style: TextStyle(fontSize: 12, color: Colors.black54),
         ),
@@ -496,6 +794,7 @@ class PaywallScreen extends StatefulWidget {
 
 class _PaywallScreenState extends State<PaywallScreen> {
   bool gatePassed = false;
+  bool annual = true;
   final answer = TextEditingController();
   @override
   void dispose() {
@@ -571,8 +870,23 @@ class _PaywallScreenState extends State<PaywallScreen> {
                 'This is a simulated subscription for the offline FYP demo. No payment or billing occurs.',
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 22),
-              const SoftCard(
+            const SizedBox(height: 22),
+            SegmentedButton<bool>(
+              segments: const [
+                ButtonSegment(value: false, label: Text('Monthly • PKR 499')),
+                ButtonSegment(value: true, label: Text('Annual • PKR 3,999')),
+              ],
+              selected: {annual},
+              onSelectionChanged: (value) => setState(() => annual = value.first),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              annual ? 'Demo selection • Save 33% label only' : 'Demo selection • Cancel anytime label only',
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 12, color: Colors.black54),
+            ),
+            const SizedBox(height: 18),
+            const SoftCard(
                 color: LifeColors.mint,
                 child: Column(
                   children: [

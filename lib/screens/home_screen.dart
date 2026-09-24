@@ -423,9 +423,19 @@ class ProfileScreen extends StatelessWidget {
                   style: Theme.of(context).textTheme.titleLarge,
                 ),
                 const SizedBox(height: 12),
-                ...scenarios
-                    .where((item) => state.bestScores.containsKey(item.id))
-                    .map(
+                if (!state.isPremium)
+                  SoftCard(
+                    child: Row(children: [
+                      const Icon(Icons.lock_rounded, color: LifeColors.purple),
+                      const SizedBox(width: 12),
+                      const Expanded(child: Text('Score history is available in premium demo mode.')),
+                      TextButton(onPressed: () => context.push('/paywall'), child: const Text('View')),
+                    ]),
+                  )
+                else ...[
+                  ...scenarios
+                      .where((item) => state.bestScores.containsKey(item.id))
+                      .map(
                       (item) => Padding(
                         padding: const EdgeInsets.only(bottom: 10),
                         child: SoftCard(
@@ -453,7 +463,20 @@ class ProfileScreen extends StatelessWidget {
                           ),
                         ),
                       ),
+                      ),
+                  const SizedBox(height: 20),
+                  Text('Demo billing history', style: Theme.of(context).textTheme.titleLarge),
+                  const SizedBox(height: 10),
+                  const SoftCard(
+                    child: ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      leading: CircleAvatar(backgroundColor: LifeColors.mint, child: Icon(Icons.receipt_long_rounded, color: LifeColors.teal)),
+                      title: Text('Premium demo activation', style: TextStyle(fontWeight: FontWeight.w900)),
+                      subtitle: Text('Simulated locally • No charge'),
+                      trailing: Text('PKR 0'),
                     ),
+                  ),
+                ],
               ],
             ),
           ),

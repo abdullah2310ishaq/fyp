@@ -85,46 +85,13 @@ class SettingsScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       const Text(
-                        'These controls simulate product states locally. They do not connect to billing or a server.',
+                        'Subscription, coins, scene shortcuts, and reset are behind a grown-up maths gate.',
                       ),
                       const SizedBox(height: 14),
-                      SegmentedButton<SubscriptionState>(
-                        segments: const [
-                          ButtonSegment(
-                            value: SubscriptionState.free,
-                            label: Text('Free'),
-                          ),
-                          ButtonSegment(
-                            value: SubscriptionState.active,
-                            label: Text('Active'),
-                          ),
-                          ButtonSegment(
-                            value: SubscriptionState.expired,
-                            label: Text('Expired'),
-                          ),
-                        ],
-                        selected: {state.subscription},
-                        onSelectionChanged: (value) =>
-                            state.setDemoSubscription(value.first),
-                      ),
-                      const SizedBox(height: 12),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: OutlinedButton(
-                              onPressed: () =>
-                                  state.setDemoCoins(state.coins + 100),
-                              child: const Text('+100 coins'),
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: OutlinedButton(
-                              onPressed: () => _confirmReset(context, state),
-                              child: const Text('Reset demo'),
-                            ),
-                          ),
-                        ],
+                      OutlinedButton.icon(
+                        onPressed: () => _openDemoPanel(context),
+                        icon: const Icon(Icons.admin_panel_settings_rounded),
+                        label: const Text('Open grown-up demo panel'),
                       ),
                     ],
                   ),
@@ -154,6 +121,62 @@ class SettingsScreen extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Future<void> _openDemoPanel(BuildContext context) async {
+    final answer = TextEditingController();
+    final passed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Grown-up check'),
+        content: TextField(
+          controller: answer,
+          keyboardType: TextInputType.number,
+          decoration: const InputDecoration(labelText: 'What is 9 + 7?'),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(dialogContext, false), child: const Text('Cancel')),
+          FilledButton(onPressed: () => Navigator.pop(dialogContext, answer.text.trim() == '16'), child: const Text('Continue')),
+        ],
+      ),
+    );
+    answer.dispose();
+    if (passed != true || !context.mounted) return;
+    await showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      isScrollControlled: true,
+      builder: (sheetContext) => Consumer<AppState>(
+        builder: (panelContext, state, _) => SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(24, 4, 24, 28),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text('Demo panel', style: Theme.of(panelContext).textTheme.headlineMedium),
+                const SizedBox(height: 8),
+                const Text('Every setting below is local and simulated. No billing or server is contacted.'),
+                const SizedBox(height: 16),
+                SegmentedButton<SubscriptionState>(
+                  segments: const [
+                    ButtonSegment(value: SubscriptionState.free, label: Text('Free')),
+                    ButtonSegment(value: SubscriptionState.active, label: Text('Active')),
+                    ButtonSegment(value: SubscriptionState.expired, label: Text('Expired')),
+                  ],
+                  selected: {state.subscription},
+                  onSelectionChanged: (value) => state.setDemoSubscription(value.first),
+                ),
+                const SizedBox(height: 12),
+                OutlinedButton(onPressed: () => state.setDemoCoins(state.coins + 100), child: Text('Add 100 coins • Current ${state.coins}')),
+                const SizedBox(height: 8),
+                OutlinedButton.icon(onPressed: () { Navigator.pop(sheetContext); _confirmReset(context, state); }, icon: const Icon(Icons.delete_outline_rounded), label: const Text('Reset all local demo data')),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

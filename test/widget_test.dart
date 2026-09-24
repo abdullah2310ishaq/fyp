@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:lifeiq/data/scenario_data.dart';
+import 'package:lifeiq/core/scenario_validator.dart';
 import 'package:lifeiq/models/story.dart';
 import 'package:lifeiq/state/app_state.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -24,6 +25,10 @@ void main() {
     }
   });
 
+  test('complete catalogue passes schema and safety validation', () {
+    expect(validateCatalogue(scenarios), isEmpty);
+  });
+
   test('only story one is free', () {
     expect(scenarios.where((story) => story.isFree).map((story) => story.id), [
       's1',
@@ -34,9 +39,9 @@ void main() {
     final state = AppState();
     await state.load();
     await state.startScenario('s1');
-    await state.nextStep();
-    await state.nextStep();
-    await state.nextStep();
+    while (state.activeStep!.choices.every((item) => item.quality != ChoiceQuality.tryAgain)) {
+      await state.nextStep();
+    }
     final choiceStep = state.activeStep!;
     final unsafe = choiceStep.choices.firstWhere(
       (item) => item.quality == ChoiceQuality.tryAgain,

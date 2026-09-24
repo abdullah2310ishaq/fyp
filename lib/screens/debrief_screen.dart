@@ -120,20 +120,12 @@ class DebriefScreen extends StatelessWidget {
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   const SizedBox(height: 12),
-                  _SkillBar(
-                    label: 'Safety awareness',
-                    value: score / 100,
-                    color: LifeColors.teal,
-                  ),
-                  _SkillBar(
-                    label: 'Calm thinking',
-                    value: ((score + 8).clamp(0, 100)) / 100,
-                    color: LifeColors.purple,
-                  ),
-                  _SkillBar(
-                    label: 'Clear communication',
-                    value: ((score - 7).clamp(0, 100)) / 100,
-                    color: LifeColors.coral,
+                  ...state.lastDimensionScores.entries.map(
+                    (entry) => _SkillBar(
+                      label: _dimensionLabel(entry.key),
+                      value: entry.value / 100,
+                      color: _dimensionColor(entry.key),
+                    ),
                   ),
                 ] else ...[
                   SoftCard(
@@ -157,6 +149,33 @@ class DebriefScreen extends StatelessWidget {
                     ),
                   ),
                 ],
+                const SizedBox(height: 20),
+                SoftCard(
+                  color: const Color(0xFFFFF0D4),
+                  child: Row(
+                    children: [
+                      const CircleAvatar(
+                        backgroundColor: LifeColors.yellow,
+                        child: Icon(
+                          Icons.stars_rounded,
+                          color: LifeColors.navy,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          'You now have ${state.coins} practice coins.',
+                          style: const TextStyle(fontWeight: FontWeight.w900),
+                        ),
+                      ),
+                      if (score >= 75)
+                        Pill(
+                          icon: Icons.workspace_premium_rounded,
+                          label: story.badge,
+                        ),
+                    ],
+                  ),
+                ),
                 const SizedBox(height: 20),
                 Text(
                   'Remember these steps',
@@ -223,6 +242,23 @@ class DebriefScreen extends StatelessWidget {
       ),
     );
   }
+
+  String _dimensionLabel(String key) => switch (key) {
+    'safety' => 'Safety awareness',
+    'resilience' => 'Psychological resilience',
+    'social' => 'Social intelligence',
+    'communication' => 'Communication clarity',
+    'emotional' => 'Emotional preparedness',
+    _ => key,
+  };
+
+  Color _dimensionColor(String key) => switch (key) {
+    'safety' => LifeColors.teal,
+    'resilience' => LifeColors.purple,
+    'social' => LifeColors.green,
+    'communication' => LifeColors.coral,
+    _ => const Color(0xFFE69A3B),
+  };
 }
 
 class _SkillBar extends StatelessWidget {

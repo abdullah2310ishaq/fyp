@@ -33,6 +33,10 @@ class AppState extends ChangeNotifier {
   String? coaching;
   final Set<String> disabledChoices = {};
   double feelingValue = 0.5;
+  int hintsUsed = 0;
+  final Map<String, int> dimensionEarned = {};
+  final Map<String, int> dimensionPossible = {};
+  Map<String, int> lastDimensionScores = {};
 
   bool get isPremium => subscription == SubscriptionState.active;
   LifeScenario? get activeScenario => activeScenarioId == null
@@ -62,6 +66,21 @@ class AppState extends ChangeNotifier {
     activeStepIndex = _prefs!.getInt('activeStep') ?? 0;
     earnedPoints = _prefs!.getInt('earned') ?? 0;
     possiblePoints = _prefs!.getInt('possible') ?? 0;
+    hintsUsed = _prefs!.getInt('hintsUsed') ?? 0;
+    final earnedDimensions = _prefs!.getString('dimensionEarned');
+    if (earnedDimensions != null) {
+      final decoded = jsonDecode(earnedDimensions) as Map<String, dynamic>;
+      dimensionEarned.addAll(
+        decoded.map((key, value) => MapEntry(key, value as int)),
+      );
+    }
+    final possibleDimensions = _prefs!.getString('dimensionPossible');
+    if (possibleDimensions != null) {
+      final decoded = jsonDecode(possibleDimensions) as Map<String, dynamic>;
+      dimensionPossible.addAll(
+        decoded.map((key, value) => MapEntry(key, value as int)),
+      );
+    }
     final scores = _prefs!.getString('scores');
     if (scores != null) {
       final decoded = jsonDecode(scores) as Map<String, dynamic>;
@@ -110,22 +129,42 @@ class AppState extends ChangeNotifier {
     attempts = 0;
     coaching = null;
     disabledChoices.clear();
+    dimensionEarned.clear();
+    dimensionPossible.clear();
+    hintsUsed = 0;
     await _save();
   }
 
   Future<void> nextStep() async {
     coaching = null;
     disabledChoices.clear();
+    attempts = 0;
     activeStepIndex += 1;
     await _save();
   }
 
   Future<bool> choose(StoryChoice choice) async {
     if (disabledChoices.contains(choice.id)) return false;
-    possiblePoints += attempts == 0 ? 10 : 0;
+    final step = activeStep;
+    final isScored = step != null && !step.unscored;
+    if (isScored && attempts == 0) {
+      possiblePoints += 10;
+      dimensionPossible.update(
+        step.dimension,
+        (value) => value + 10,
+        ifAbsent: () => 10,
+      );
+    }
     attempts += 1;
     if (choice.quality == ChoiceQuality.best) {
-      if (attempts == 1) earnedPoints += 10;
+      if (isScored && attempts == 1) {
+        earnedPoints += 10;
+        dimensionEarned.update(
+          step.dimension,
+          (value) => value + 10,
+          ifAbsent: () => 10,
+        );
+      }
       coaching = null;
       disabledChoices.clear();
       attempts = 0;
@@ -133,8 +172,13 @@ class AppState extends ChangeNotifier {
       await _save();
       return true;
     }
-    if (choice.quality == ChoiceQuality.okay && attempts == 1) {
+    if (isScored && choice.quality == ChoiceQuality.okay && attempts == 1) {
       earnedPoints += 5;
+      dimensionEarned.update(
+        step.dimension,
+        (value) => value + 5,
+        ifAbsent: () => 5,
+      );
     }
     coaching =
         choice.coaching?.get(isUrdu) ??
@@ -151,12 +195,73 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<void> completeInteraction({required bool correct}) async {
+    final step = activeStep;
+    if (step != null && !step.unscored) {
+      possiblePoints += 10;
+      dimensionPossible.update(
+        step.dimension,
+        (value) => value + 10,
+        ifAbsent: () => 10,
+      );
+      if (correct) {
+        earnedPoints += 10;
+        dimensionEarned.update(
+          step.dimension,
+          (value) => value + 10,
+          ifAbsent: () => 10,
+        );
+      }
+    }
+    await nextStep();
+  }
+
+  Future<String> useHint() async {
+    if (!isPremium) return 'Hints are available in premium demo mode.';
+    if (hintsUsed >= 3) return 'You have used all 3 hints in this story.';
+    if (coins < 10) return 'You need 10 practice coins for a hint.';
+    final step = activeStep;
+    if (step == null || (step.kind != StoryKind.choice && step.kind != StoryKind.multiChoice)) {
+      return 'A hint will be available at the next decision.';
+    }
+    final removable = step.choices.where((choice) => choice.quality == ChoiceQuality.tryAgain && !disabledChoices.contains(choice.id)).firstOrNull;
+    if (removable == null) return 'Dost has already narrowed this decision for you.';
+    coins -= 10;
+    hintsUsed += 1;
+    disabledChoices.add(removable.id);
+    coaching = isUrdu
+        ? 'دوست کا اشارہ: محفوظ انتخاب فاصلہ بڑھاتا، قابلِ اعتماد مدد لاتا، یا واضح اطلاع دیتا ہے۔'
+        : 'Dost’s hint: the safer choice creates distance, brings trusted help, or communicates clearly.';
+    await _save();
+    return 'Hint used • 10 coins • ${3 - hintsUsed} remaining';
+  }
+
   Future<int> completeScenario() async {
     final id = activeScenarioId;
     if (id == null) return 0;
-    final score = possiblePoints == 0
-        ? 100
-        : ((earnedPoints / possiblePoints) * 100).round().clamp(0, 100);
+    lastDimensionScores = {
+      for (final entry in dimensionPossible.entries)
+        entry.key: entry.value == 0
+            ? 0
+            : (((dimensionEarned[entry.key] ?? 0) / entry.value) * 100)
+                  .round()
+                  .clamp(0, 100),
+    };
+    final story = scenarios.firstWhere((item) => item.id == id);
+    var weighted = 0.0;
+    var usedWeight = 0.0;
+    for (final entry in story.weights.entries) {
+      final dimensionScore = lastDimensionScores[entry.key];
+      if (dimensionScore != null) {
+        weighted += dimensionScore * entry.value;
+        usedWeight += entry.value;
+      }
+    }
+    final score = usedWeight == 0
+        ? (possiblePoints == 0
+              ? 100
+              : ((earnedPoints / possiblePoints) * 100).round().clamp(0, 100))
+        : (weighted / usedWeight).round().clamp(0, 100);
     final previous = bestScores[id] ?? 0;
     bestScores[id] = score > previous ? score : previous;
     final baseCoins = score >= 90
@@ -171,7 +276,7 @@ class AppState extends ChangeNotifier {
         ? (score - previous).clamp(10, 100)
         : 0;
     coins += baseCoins + firstBonus + improvement;
-    if (score >= 75) badges.add(_badgeFor(id));
+    if (score >= 75) badges.add(story.badge);
     activeScenarioId = null;
     activeStepIndex = 0;
     await _save();
@@ -212,17 +317,6 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
-  String _badgeFor(String id) => switch (id) {
-    's1' => 'Brave Voice',
-    's2' => 'Kind & Strong',
-    's3' => 'Safety Scout',
-    's4' => 'Safe Surfer',
-    's5' => 'Boundary Hero',
-    's6' => 'Calm Captain',
-    's7' => 'Smart Helper',
-    _ => 'Trusted Adult Finder',
-  };
-
   Future<void> _save() async {
     final prefs = _prefs;
     if (prefs == null) return;
@@ -248,6 +342,9 @@ class AppState extends ChangeNotifier {
       await prefs.setInt('activeStep', activeStepIndex);
       await prefs.setInt('earned', earnedPoints);
       await prefs.setInt('possible', possiblePoints);
+      await prefs.setInt('hintsUsed', hintsUsed);
+      await prefs.setString('dimensionEarned', jsonEncode(dimensionEarned));
+      await prefs.setString('dimensionPossible', jsonEncode(dimensionPossible));
     }
     notifyListeners();
   }

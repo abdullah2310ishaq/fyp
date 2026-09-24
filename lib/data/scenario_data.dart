@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/story.dart';
+import 'expanded_scenarios.dart';
 
 const _guide = LocalText('Dost', 'دوست');
 const _you = LocalText('You', 'آپ');
@@ -83,7 +84,9 @@ List<StoryStep> _story({
   ),
 ];
 
-final scenarios = <LifeScenario>[
+final scenarios = expandedScenarios;
+
+final compactScenarios = <LifeScenario>[
   LifeScenario(
     id: 's1',
     title: const LocalText('My Body, My Rules', 'میرا جسم، میرے اصول'),
