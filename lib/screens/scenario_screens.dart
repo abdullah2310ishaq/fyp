@@ -442,7 +442,7 @@ class _SimulationScreenState extends State<SimulationScreen> {
           ),
         ),
         FilledButton(
-          onPressed: state.nextStep,
+          onPressed: () => state.completeChecklist(selectedIds),
           child: Text(
             state.isUrdu
                 ? 'ہر جواب قبول ہے — جاری رکھیں'
@@ -492,7 +492,11 @@ class _SimulationScreenState extends State<SimulationScreen> {
                     );
                     return;
                   }
-                  await state.completeInteraction(correct: true);
+                  await state.completeInteraction(
+                    correct: true,
+                    interaction: 'multiChoice',
+                    selectedIds: selectedIds.toList(),
+                  );
                 },
           icon: const Icon(Icons.fact_check_rounded),
           label: Text(state.isUrdu ? 'انتخاب چیک کریں' : 'Check my choices'),
@@ -576,7 +580,11 @@ class _SimulationScreenState extends State<SimulationScreen> {
               );
               return;
             }
-            await state.completeInteraction(correct: true);
+            await state.completeInteraction(
+              correct: true,
+              interaction: 'ranking',
+              selectedIds: actual,
+            );
           },
           icon: const Icon(Icons.sort_rounded),
           label: Text(state.isUrdu ? 'ترتیب چیک کریں' : 'Check this order'),
@@ -613,7 +621,7 @@ class _SimulationScreenState extends State<SimulationScreen> {
         ),
         const SizedBox(height: 12),
         FilledButton(
-          onPressed: state.nextStep,
+          onPressed: state.completeFeeling,
           child: Text(state.tr('Continue', 'جاری رکھیں')),
         ),
       ],
@@ -676,7 +684,12 @@ class _SimulationScreenState extends State<SimulationScreen> {
         ),
         const SizedBox(height: 12),
         FilledButton(
-          onPressed: groundingTaps < 5 ? null : state.nextStep,
+          onPressed: groundingTaps < 5
+              ? null
+              : () => state.completeInteraction(
+                  correct: true,
+                  interaction: 'grounding',
+                ),
           child: Text(
             state.isUrdu ? 'مکمل — جاری رکھیں' : 'Finished — continue',
           ),
@@ -741,7 +754,10 @@ class _SimulationScreenState extends State<SimulationScreen> {
         FilledButton(
           onPressed: textController.text.trim().isEmpty
               ? null
-              : () => state.completeInteraction(correct: true),
+              : () => state.completeInteraction(
+                  correct: true,
+                  interaction: step.kind.name,
+                ),
           child: Text(
             state.tr('Continue safely', 'محفوظ انداز میں جاری رکھیں'),
           ),

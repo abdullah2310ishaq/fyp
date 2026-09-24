@@ -102,6 +102,65 @@ void main() {
     expect(state.activeStepIndex, before + 1);
   });
 
+  test('retry state and decision history survive app restart', () async {
+    final state = AppState();
+    await state.load();
+    await state.startScenario('s1');
+    while (state.activeStep!.choices.every(
+      (item) => item.quality != ChoiceQuality.tryAgain,
+    )) {
+      await state.nextStep();
+    }
+    final unsafe = state.activeStep!.choices.firstWhere(
+      (item) => item.quality == ChoiceQuality.tryAgain,
+    );
+    await state.choose(unsafe);
+
+    final restored = AppState();
+    await restored.load();
+    expect(restored.activeScenarioId, 's1');
+    expect(restored.activeStepIndex, state.activeStepIndex);
+    expect(restored.disabledChoices, contains(unsafe.id));
+    expect(restored.coaching, isNotEmpty);
+    expect(restored.decisionHistory.last['choiceId'], unsafe.id);
+  });
+
+  test('completed session cannot award coins twice', () async {
+    final state = AppState();
+    await state.load();
+    await state.startScenario('s1');
+    final firstScore = await state.completeScenario();
+    final coinsAfterFirst = state.coins;
+    final secondScore = await state.completeScenario();
+    expect(firstScore, 100);
+    expect(secondScore, 0);
+    expect(state.coins, coinsAfterFirst);
+  });
+
+  test('rapid repeated choice advances and scores only once', () async {
+    final state = AppState();
+    await state.load();
+    await state.startScenario('s1');
+    while (state.activeStep!.choices.every(
+      (item) => item.quality != ChoiceQuality.best,
+    )) {
+      await state.nextStep();
+    }
+    final safe = state.activeStep!.choices.firstWhere(
+      (item) => item.quality == ChoiceQuality.best,
+    );
+    final beforeStep = state.activeStepIndex;
+
+    final results = await Future.wait([state.choose(safe), state.choose(safe)]);
+
+    expect(results.where((result) => result), hasLength(1));
+    expect(state.activeStepIndex, beforeStep + 1);
+    expect(
+      state.decisionHistory.where((item) => item['choiceId'] == safe.id),
+      hasLength(1),
+    );
+  });
+
   testWidgets('visual stage has an accessible scene label', (tester) async {
     await tester.pumpWidget(
       const MaterialApp(
