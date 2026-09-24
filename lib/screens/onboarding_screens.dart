@@ -18,7 +18,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Timer(const Duration(milliseconds: 900), () {
+    Timer(const Duration(seconds: 2), () {
       if (!mounted) return;
       final state = context.read<AppState>();
       context.go(

@@ -44,7 +44,9 @@ class AppState extends ChangeNotifier {
   String tr(String en, String ur) => isUrdu ? ur : en;
   LifeScenario? get activeScenario => activeScenarioId == null
       ? null
-      : expandedScenarios.where((item) => item.id == activeScenarioId).firstOrNull;
+      : expandedScenarios
+            .where((item) => item.id == activeScenarioId)
+            .firstOrNull;
   StoryStep? get activeStep {
     final story = activeScenario;
     if (story == null || activeStepIndex >= story.steps.length) return null;
@@ -145,6 +147,32 @@ class AppState extends ChangeNotifier {
     dimensionEarned.clear();
     dimensionPossible.clear();
     hintsUsed = 0;
+    await _save();
+  }
+
+  Future<void> startAtStep(String id, String stepId) async {
+    await startScenario(id);
+    final story = activeScenario;
+    final index = story?.steps.indexWhere((step) => step.id == stepId) ?? -1;
+    activeStepIndex = index < 0 ? 0 : index;
+    await _save();
+  }
+
+  Future<void> loadPresentationSample() async {
+    onboardingComplete = true;
+    profileComplete = true;
+    childName = 'Ayaan';
+    childAge = 10;
+    avatar = 'boy';
+    subscription = SubscriptionState.active;
+    coins = 350;
+    streak = 4;
+    bestScores.addAll({'s1': 92, 's2': 81});
+    scoreHistory.addAll({
+      's1': [74, 92],
+      's2': [81],
+    });
+    badges.addAll({'Brave Voice', 'I Reported It'});
     await _save();
   }
 
@@ -306,7 +334,9 @@ class AppState extends ChangeNotifier {
         ? (score - previous).clamp(10, 100)
         : 0;
     coins += baseCoins + firstBonus + perfectBonus + streakBonus + improvement;
-    if (score >= 75) badges.add(story.badge);
+    if (score >= 75) {
+      badges.addAll(story.badges.isEmpty ? [story.badge] : story.badges);
+    }
     activeScenarioId = null;
     activeStepIndex = 0;
     await _save();

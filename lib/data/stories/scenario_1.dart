@@ -21,6 +21,7 @@ final scenario1 = LifeScenario(
   isFree: true,
   weights: const {'safety': .5, 'resilience': .2, 'communication': .3},
   badge: 'Brave Voice',
+  badges: const ['Brave Voice', 'Trusted Adult Finder', 'Body Safety Star'],
   steps: [
     node(
       's1_checklist',
@@ -83,9 +84,17 @@ final scenario1 = LifeScenario(
       scene: 'home',
       character: 'adult',
       choices: [
-        yes('confused', 'Confused; I am not sure it was okay', 'الجھن؛ یقین نہیں یہ ٹھیک تھا'),
+        yes(
+          'confused',
+          'Confused; I am not sure it was okay',
+          'الجھن؛ یقین نہیں یہ ٹھیک تھا',
+        ),
         yes('scared', 'Uncomfortable and scared', 'بے آرام اور خوفزدہ'),
-        yes('elder', 'It felt wrong, but he is an elder', 'غلط لگا، مگر وہ بڑے ہیں'),
+        yes(
+          'elder',
+          'It felt wrong, but he is an elder',
+          'غلط لگا، مگر وہ بڑے ہیں',
+        ),
       ],
       unscored: true,
       sourceRef: 'Scenario 01 Scene 2',

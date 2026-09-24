@@ -30,6 +30,15 @@ final scenario4 = LifeScenario(
     'emotional': .1,
   },
   badge: 'Safe Surfer',
+  badges: const [
+    'Grooming Recognized',
+    'Evidence Secured',
+    'Blocked & Reported',
+    'Told My Parents',
+    'Reported to Police',
+    'Account Secured',
+    'New Account Caught',
+  ],
   steps: [
     node(
       's4_checklist',
@@ -101,10 +110,26 @@ final scenario4 = LifeScenario(
       scene: 'online',
       character: 'online',
       choices: [
-        yes('uncomfortable', 'Confused and uncomfortable', 'الجھن اور بے آرامی'),
-        yes('flattered', 'Flattered because he called me special', 'خاص کہنے پر خوشی'),
-        yes('honest', 'Unsure; maybe he is now being honest', 'الجھن؛ شاید اب سچ بول رہا ہے'),
-        yes('scared', 'Scared and unsure what to do', 'خوف اور اگلا قدم معلوم نہیں'),
+        yes(
+          'uncomfortable',
+          'Confused and uncomfortable',
+          'الجھن اور بے آرامی',
+        ),
+        yes(
+          'flattered',
+          'Flattered because he called me special',
+          'خاص کہنے پر خوشی',
+        ),
+        yes(
+          'honest',
+          'Unsure; maybe he is now being honest',
+          'الجھن؛ شاید اب سچ بول رہا ہے',
+        ),
+        yes(
+          'scared',
+          'Scared and unsure what to do',
+          'خوف اور اگلا قدم معلوم نہیں',
+        ),
       ],
       unscored: true,
       sourceRef: 'Scenario 04 Scene 2',
@@ -125,10 +150,26 @@ final scenario4 = LifeScenario(
       scene: 'online',
       character: 'online',
       choices: [
-        yes('fear', 'Very scared by the threat and school detail', 'دھمکی اور اسکول کی بات سے بہت خوف'),
-        yes('guilt', 'Guilty for talking for three weeks', 'تین ہفتے بات کرنے پر جرم'),
-        yes('screens', 'Confused that screenshots may get me in trouble', 'اسکرین شاٹس سے مشکل کی الجھن'),
-        yes('anger', 'Angry and wanting to reply “stop”', 'غصہ اور “رکو” جواب دینے کی خواہش'),
+        yes(
+          'fear',
+          'Very scared by the threat and school detail',
+          'دھمکی اور اسکول کی بات سے بہت خوف',
+        ),
+        yes(
+          'guilt',
+          'Guilty for talking for three weeks',
+          'تین ہفتے بات کرنے پر جرم',
+        ),
+        yes(
+          'screens',
+          'Confused that screenshots may get me in trouble',
+          'اسکرین شاٹس سے مشکل کی الجھن',
+        ),
+        yes(
+          'anger',
+          'Angry and wanting to reply “stop”',
+          'غصہ اور “رکو” جواب دینے کی خواہش',
+        ),
       ],
       unscored: true,
       dimension: 'emotional',

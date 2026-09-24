@@ -27,6 +27,13 @@ final scenario3 = LifeScenario(
     'emotional': .1,
   },
   badge: 'Safety Scout',
+  badges: const [
+    'Stranger Recognized',
+    'Called to Confirm',
+    'Made Noise',
+    'Used a Safe Space',
+    'Reported It',
+  ],
   steps: [
     node(
       's3_checklist',
@@ -80,10 +87,26 @@ final scenario3 = LifeScenario(
       scene: 'road',
       character: 'stranger',
       choices: [
-        yes('alarm', 'Scared; something feels wrong though he seems nice', 'خوف؛ اچھا لگنے کے باوجود کچھ غلط'),
-        yes('confused', 'Confused; maybe my father sent him', 'الجھن؛ شاید والد نے بھیجا'),
-        yes('relieved', 'Relieved that someone offers help', 'مدد کی پیشکش پر اطمینان'),
-        yes('name', 'He knows my father’s name, so maybe he is safe', 'والد کا نام جانتا ہے، شاید محفوظ ہے'),
+        yes(
+          'alarm',
+          'Scared; something feels wrong though he seems nice',
+          'خوف؛ اچھا لگنے کے باوجود کچھ غلط',
+        ),
+        yes(
+          'confused',
+          'Confused; maybe my father sent him',
+          'الجھن؛ شاید والد نے بھیجا',
+        ),
+        yes(
+          'relieved',
+          'Relieved that someone offers help',
+          'مدد کی پیشکش پر اطمینان',
+        ),
+        yes(
+          'name',
+          'He knows my father’s name, so maybe he is safe',
+          'والد کا نام جانتا ہے، شاید محفوظ ہے',
+        ),
       ],
       unscored: true,
       sourceRef: 'Scenario 03 Scene 2',
@@ -104,9 +127,21 @@ final scenario3 = LifeScenario(
       scene: 'road',
       character: 'stranger',
       choices: [
-        yes('moreAlarm', 'More scared; details feel real but my alarm remains', 'زیادہ خوف؛ تفصیل حقیقی مگر خطرے کا احساس قائم'),
-        yes('moreConfused', 'More confused; maybe he is safe', 'زیادہ الجھن؛ شاید محفوظ'),
-        yes('convinced', 'More convinced because he knows so much', 'زیادہ یقین کیونکہ وہ بہت جانتا ہے'),
+        yes(
+          'moreAlarm',
+          'More scared; details feel real but my alarm remains',
+          'زیادہ خوف؛ تفصیل حقیقی مگر خطرے کا احساس قائم',
+        ),
+        yes(
+          'moreConfused',
+          'More confused; maybe he is safe',
+          'زیادہ الجھن؛ شاید محفوظ',
+        ),
+        yes(
+          'convinced',
+          'More convinced because he knows so much',
+          'زیادہ یقین کیونکہ وہ بہت جانتا ہے',
+        ),
       ],
       unscored: true,
       dimension: 'emotional',

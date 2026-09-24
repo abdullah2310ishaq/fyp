@@ -4,6 +4,7 @@ import 'package:lifeiq/data/expanded_scenarios.dart';
 import 'package:lifeiq/core/scenario_validator.dart';
 import 'package:lifeiq/models/story.dart';
 import 'package:lifeiq/state/app_state.dart';
+import 'package:lifeiq/widgets/life_widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -29,10 +30,49 @@ void main() {
     expect(validateCatalogue(expandedScenarios), isEmpty);
   });
 
+  test('expanded source scene inventory is complete', () {
+    expect(
+      {for (final story in expandedScenarios) story.id: story.steps.length},
+      {
+        's1': 11,
+        's2': 13,
+        's3': 13,
+        's4': 14,
+        's5': 9,
+        's6': 9,
+        's7': 9,
+        's8': 10,
+      },
+    );
+    expect(
+      expandedScenarios[3].steps.any(
+        (step) => step.kind == StoryKind.multiChoice,
+      ),
+      isTrue,
+    );
+    expect(
+      expandedScenarios[1].steps.any((step) => step.kind == StoryKind.ranking),
+      isTrue,
+    );
+    expect(
+      expandedScenarios[5].steps.any(
+        (step) => step.kind == StoryKind.grounding,
+      ),
+      isTrue,
+    );
+    expect(
+      expandedScenarios
+          .expand((story) => story.steps)
+          .where((step) => step.kind == StoryKind.mockVoice),
+      hasLength(8),
+    );
+  });
+
   test('only story one is free', () {
-    expect(expandedScenarios.where((story) => story.isFree).map((story) => story.id), [
-      's1',
-    ]);
+    expect(
+      expandedScenarios.where((story) => story.isFree).map((story) => story.id),
+      ['s1'],
+    );
   });
 
   test('unsafe choice coaches and safe choice advances', () async {
@@ -64,15 +104,20 @@ void main() {
 
   testWidgets('visual stage has an accessible scene label', (tester) async {
     await tester.pumpWidget(
-      MaterialApp(
+      const MaterialApp(
         home: Scaffold(
-          body: Semantics(
-            label: 'story canvas',
-            child: ColoredBox(color: Colors.teal),
+          body: StoryStage(
+            scene: 'school',
+            character: 'peer',
+            speaker: 'Dost',
+            reduceMotion: true,
           ),
         ),
       ),
     );
-    expect(find.bySemanticsLabel('story canvas'), findsOneWidget);
+    expect(
+      find.bySemanticsLabel('school scene with Dost speaking'),
+      findsOneWidget,
+    );
   });
 }

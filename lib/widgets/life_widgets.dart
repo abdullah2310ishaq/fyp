@@ -103,27 +103,72 @@ class Pill extends StatelessWidget {
   );
 }
 
-class StoryStage extends StatelessWidget {
+class StoryStage extends StatefulWidget {
   const StoryStage({
     super.key,
     required this.scene,
     required this.character,
     required this.speaker,
+    this.reduceMotion = false,
   });
   final String scene;
   final String character;
   final String speaker;
+  final bool reduceMotion;
+
+  @override
+  State<StoryStage> createState() => _StoryStageState();
+}
+
+class _StoryStageState extends State<StoryStage>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController controller = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 2200),
+    lowerBound: 0,
+    upperBound: 1,
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    if (!widget.reduceMotion) controller.repeat(reverse: true);
+  }
+
+  @override
+  void didUpdateWidget(covariant StoryStage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.reduceMotion != widget.reduceMotion) {
+      widget.reduceMotion
+          ? controller.reset()
+          : controller.repeat(reverse: true);
+    }
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) => Semantics(
-    label: '$scene scene with $speaker speaking',
+    label: '${widget.scene} scene with ${widget.speaker} speaking',
     image: true,
-    child: ClipRRect(
-      borderRadius: BorderRadius.circular(28),
-      child: AspectRatio(
-        aspectRatio: 16 / 10,
-        child: CustomPaint(
-          painter: _StoryPainter(scene: scene, character: character),
+    child: AnimatedBuilder(
+      animation: controller,
+      builder: (context, child) =>
+          Transform.scale(scale: 1 + (controller.value * .006), child: child),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(28),
+        child: AspectRatio(
+          aspectRatio: 16 / 10,
+          child: CustomPaint(
+            painter: _StoryPainter(
+              scene: widget.scene,
+              character: widget.character,
+            ),
+          ),
         ),
       ),
     ),

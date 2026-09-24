@@ -31,7 +31,10 @@ class _TypewriterTextState extends State<TypewriterText> {
   @override
   void didUpdateWidget(covariant TypewriterText oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.text != widget.text || oldWidget.reduceMotion != widget.reduceMotion) _start();
+    if (oldWidget.text != widget.text ||
+        oldWidget.reduceMotion != widget.reduceMotion) {
+      _start();
+    }
   }
 
   void _start() {

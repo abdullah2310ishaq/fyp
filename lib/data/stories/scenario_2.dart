@@ -27,6 +27,12 @@ final scenario2 = LifeScenario(
     'emotional': .1,
   },
   badge: 'I Reported It',
+  badges: const [
+    'Bullying Recognized',
+    'I Reported It',
+    'I Documented It',
+    'Retaliation Refused',
+  ],
   steps: [
     node(
       's2_checklist',
@@ -85,10 +91,26 @@ final scenario2 = LifeScenario(
       scene: 'school',
       character: 'peer',
       choices: [
-        yes('scared', 'Scared; I do not want to go to school', 'خوف؛ اسکول نہیں جانا چاہتا/چاہتی'),
-        yes('blame', 'Angry, but maybe I deserve it', 'غصہ، مگر شاید میری غلطی'),
-        yes('weak', 'Embarrassed to tell because I may look weak', 'بتانے میں شرم کہ کمزور لگوں گا/گی'),
-        yes('mixed', 'Confused because Bilal is sometimes nice', 'الجھن کیونکہ بلال کبھی اچھا بھی ہے'),
+        yes(
+          'scared',
+          'Scared; I do not want to go to school',
+          'خوف؛ اسکول نہیں جانا چاہتا/چاہتی',
+        ),
+        yes(
+          'blame',
+          'Angry, but maybe I deserve it',
+          'غصہ، مگر شاید میری غلطی',
+        ),
+        yes(
+          'weak',
+          'Embarrassed to tell because I may look weak',
+          'بتانے میں شرم کہ کمزور لگوں گا/گی',
+        ),
+        yes(
+          'mixed',
+          'Confused because Bilal is sometimes nice',
+          'الجھن کیونکہ بلال کبھی اچھا بھی ہے',
+        ),
       ],
       unscored: true,
       sourceRef: 'Scenario 02 Scene 2',

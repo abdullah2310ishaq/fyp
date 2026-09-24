@@ -252,7 +252,9 @@ class _SimulationScreenState extends State<SimulationScreen> {
             onPressed: () async {
               final message = await state.useHint();
               if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text(message)));
               }
             },
             icon: Badge(
@@ -287,6 +289,7 @@ class _SimulationScreenState extends State<SimulationScreen> {
                   scene: step.scene,
                   character: step.character,
                   speaker: step.speaker.get(ur),
+                  reduceMotion: state.reduceMotion,
                 ),
                 const SizedBox(height: 12),
                 Row(
@@ -294,11 +297,15 @@ class _SimulationScreenState extends State<SimulationScreen> {
                     story.steps.length,
                     (index) => Expanded(
                       child: AnimatedContainer(
-                        duration: state.reduceMotion ? Duration.zero : const Duration(milliseconds: 180),
+                        duration: state.reduceMotion
+                            ? Duration.zero
+                            : const Duration(milliseconds: 180),
                         height: 6,
                         margin: const EdgeInsets.symmetric(horizontal: 2),
                         decoration: BoxDecoration(
-                          color: index <= state.activeStepIndex ? LifeColors.teal : Colors.black12,
+                          color: index <= state.activeStepIndex
+                              ? LifeColors.teal
+                              : Colors.black12,
                           borderRadius: BorderRadius.circular(99),
                         ),
                       ),
@@ -726,14 +733,18 @@ class _SimulationScreenState extends State<SimulationScreen> {
                 'I need to tell you something that made me feel unsafe. Please help me.',
           ),
           icon: const Icon(Icons.lightbulb_outline_rounded),
-          label: Text(state.tr('Use a guided example', 'رہنمائی والی مثال لیں')),
+          label: Text(
+            state.tr('Use a guided example', 'رہنمائی والی مثال لیں'),
+          ),
         ),
         const SizedBox(height: 10),
         FilledButton(
           onPressed: textController.text.trim().isEmpty
               ? null
               : () => state.completeInteraction(correct: true),
-          child: Text(state.tr('Continue safely', 'محفوظ انداز میں جاری رکھیں')),
+          child: Text(
+            state.tr('Continue safely', 'محفوظ انداز میں جاری رکھیں'),
+          ),
         ),
         const SizedBox(height: 8),
         Text(
@@ -999,40 +1010,49 @@ class _Feature extends StatelessWidget {
   );
 }
 
-Future<void> showHelpSheet(BuildContext context) => showModalBottomSheet<void>(
-  context: context,
-  showDragHandle: true,
-  isScrollControlled: true,
-  builder: (context) => SafeArea(
-    child: Padding(
-      padding: const EdgeInsets.fromLTRB(24, 4, 24, 28),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Text(
-            'Pause. Move safe. Tell.',
-            style: Theme.of(context).textTheme.headlineMedium,
-          ),
-          const SizedBox(height: 12),
-          const Text(
-            'If a story reminds you of something real, you can stop. Move near a safe person and tell a trusted adult in your life. If the first person cannot help, tell another.',
-          ),
-          const SizedBox(height: 14),
-          const SoftCard(
-            color: LifeColors.mint,
-            child: Text(
-              'LifeIQ is a learning demo. It is not an emergency service and does not contact anyone for you.',
-              style: TextStyle(fontWeight: FontWeight.w800),
+Future<void> showHelpSheet(BuildContext context) {
+  final state = context.read<AppState>();
+  return showModalBottomSheet<void>(
+    context: context,
+    showDragHandle: true,
+    isScrollControlled: true,
+    builder: (context) => SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(24, 4, 24, 28),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              state.tr('Pause. Move safe. Tell.', 'رکیں۔ محفوظ جائیں۔ بتائیں۔'),
+              style: Theme.of(context).textTheme.headlineMedium,
             ),
-          ),
-          const SizedBox(height: 16),
-          FilledButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('I understand'),
-          ),
-        ],
+            const SizedBox(height: 12),
+            Text(
+              state.tr(
+                'If a story reminds you of something real, you can stop. Move near a safe person and tell a trusted adult in your life. If the first person cannot help, tell another.',
+                'اگر کہانی کسی حقیقی بات کی یاد دلائے تو رک سکتے ہیں۔ محفوظ شخص کے قریب جائیں اور قابلِ اعتماد بڑے کو بتائیں۔ پہلا مدد نہ کرے تو دوسرے کو بتائیں۔',
+              ),
+            ),
+            const SizedBox(height: 14),
+            SoftCard(
+              color: LifeColors.mint,
+              child: Text(
+                state.tr(
+                  'LifeIQ is a learning demo. It is not an emergency service and does not contact anyone for you.',
+                  'LifeIQ سیکھنے کا ڈیمو ہے۔ یہ ہنگامی سروس نہیں اور آپ کی طرف سے کسی سے رابطہ نہیں کرتا۔',
+                ),
+                style: const TextStyle(fontWeight: FontWeight.w800),
+              ),
+            ),
+            const SizedBox(height: 16),
+            FilledButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(state.tr('I understand', 'میں سمجھ گیا/گئی')),
+            ),
+          ],
+        ),
       ),
     ),
-  ),
-);
+  );
+}

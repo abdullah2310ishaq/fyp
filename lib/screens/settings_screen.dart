@@ -198,6 +198,22 @@ class SettingsScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 OutlinedButton.icon(
+                  onPressed: state.loadPresentationSample,
+                  icon: const Icon(Icons.auto_awesome_rounded),
+                  label: const Text('Load presentation sample data'),
+                ),
+                const SizedBox(height: 8),
+                OutlinedButton.icon(
+                  onPressed: () async {
+                    await state.startAtStep('s4', 's4_scene6');
+                    if (sheetContext.mounted) Navigator.pop(sheetContext);
+                    if (context.mounted) context.go('/story');
+                  },
+                  icon: const Icon(Icons.skip_next_rounded),
+                  label: const Text('Jump to S04 multi-select scene'),
+                ),
+                const SizedBox(height: 8),
+                OutlinedButton.icon(
                   onPressed: () {
                     Navigator.pop(sheetContext);
                     _confirmReset(context, state);

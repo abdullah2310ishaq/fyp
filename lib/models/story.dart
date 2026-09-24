@@ -82,6 +82,7 @@ class LifeScenario {
       'emotional': .1,
     },
     this.badge = 'Safety Star',
+    this.badges = const [],
   });
   final String id;
   final LocalText title;
@@ -94,4 +95,5 @@ class LifeScenario {
   final List<StoryStep> steps;
   final Map<String, double> weights;
   final String badge;
+  final List<String> badges;
 }
