@@ -13,6 +13,16 @@ const _s5RefusalPracticeArt = 'assets/scenarios/s5/s5_refusal_practice.jpg';
 const _s5SafeExitArt = 'assets/scenarios/s5/s5_safe_exit.jpg';
 const _s5FinalArt = 'assets/scenarios/s5/s5_final.jpg';
 
+const _s6IntroArt = 'assets/scenarios/s6/s6_intro.jpg';
+const _s6HomeworkStressArt = 'assets/scenarios/s6/s6_homework_stress.jpg';
+const _s6FeelingIntensityArt = 'assets/scenarios/s6/s6_feeling_intensity.jpg';
+const _s6FeelingsSignalArt = 'assets/scenarios/s6/s6_feelings_signal.jpg';
+const _s6GroundingArt = 'assets/scenarios/s6/s6_grounding.jpg';
+const _s6HelpfulStepArt = 'assets/scenarios/s6/s6_helpful_step.jpg';
+const _s6SupportRequestArt = 'assets/scenarios/s6/s6_support_request.jpg';
+const _s6SmallProgressArt = 'assets/scenarios/s6/s6_small_progress.jpg';
+const _s6FinalArt = 'assets/scenarios/s6/s6_final.jpg';
+
 final scenarios5to8 = <LifeScenario>[
   LifeScenario(
     id: 's5',
@@ -212,6 +222,7 @@ final scenarios5to8 = <LifeScenario>[
     ],
     icon: Icons.self_improvement_rounded,
     color: const Color(0xFF3B9AC7),
+    coverImageAsset: _s6IntroArt,
     isFree: false,
     badge: 'Calm Captain',
     weights: const {'resilience': .4, 'communication': .2, 'emotional': .4},
@@ -221,6 +232,7 @@ final scenarios5to8 = <LifeScenario>[
         StoryKind.checklist,
         'Tick tools you know: naming feelings, slow breathing, grounding, and asking for a pause. This does not test emotional strength.',
         'جو طریقے جانتے ہیں نشان لگائیں: احساس کا نام، آہستہ سانس، گراؤنڈنگ، وقفہ مانگنا۔ یہ جذباتی طاقت کا امتحان نہیں۔',
+        imageAsset: _s6IntroArt,
         choices: [
           yes('name', 'Name a feeling', 'احساس کا نام'),
           yes('breathe', 'Slow breathing', 'آہستہ سانس'),
@@ -235,6 +247,7 @@ final scenarios5to8 = <LifeScenario>[
         StoryKind.dialogue,
         'A hard homework task is due tomorrow. Your chest feels tight, thoughts race, and the page feels impossible.',
         'مشکل ہوم ورک کل جمع ہے۔ سینہ بھاری، خیالات تیز اور صفحہ ناممکن لگتا ہے۔',
+        imageAsset: _s6HomeworkStressArt,
         speaker: narrator,
         scene: 'home',
         sourceRef: 'Master Spec S6 outline scene',
@@ -244,6 +257,7 @@ final scenarios5to8 = <LifeScenario>[
         StoryKind.feeling,
         'Show the feeling intensity. Any position is valid, private, and unscored.',
         'احساس کی شدت دکھائیں۔ ہر جگہ درست، نجی اور بغیر نمبر ہے۔',
+        imageAsset: _s6FeelingIntensityArt,
         scene: 'home',
         unscored: true,
         dimension: 'emotional',
@@ -254,6 +268,7 @@ final scenarios5to8 = <LifeScenario>[
         StoryKind.info,
         'Feelings are signals, not failures. A pause helps the thinking brain return. We calm the body before solving the problem.',
         'احساس اشارے ہیں، ناکامی نہیں۔ وقفہ سوچنے والے دماغ کو واپس لاتا ہے۔ مسئلہ حل کرنے سے پہلے جسم پرسکون کریں۔',
+        imageAsset: _s6FeelingsSignalArt,
         scene: 'home',
         sourceRef: 'S6 editorial teaching',
       ),
@@ -262,6 +277,7 @@ final scenarios5to8 = <LifeScenario>[
         StoryKind.grounding,
         'Try 5–4–3–2–1: notice five things you see, four you feel, three you hear, two you smell, and one slow breath. Tap each calm point.',
         '۵–۴–۳–۲–۱ کریں: پانچ دیکھی، چار محسوس، تین سنی، دو خوشبو، اور ایک آہستہ سانس۔ ہر پرسکون نقطہ دبائیں۔',
+        imageAsset: _s6GroundingArt,
         scene: 'home',
         unscored: true,
         sourceRef: 'Master Spec S6 grounding',
@@ -271,6 +287,7 @@ final scenarios5to8 = <LifeScenario>[
         StoryKind.choice,
         'What is a helpful next step?',
         'مددگار اگلا قدم؟',
+        imageAsset: _s6HelpfulStepArt,
         choices: [
           yes(
             'pause',
@@ -301,6 +318,7 @@ final scenarios5to8 = <LifeScenario>[
         StoryKind.mockVoice,
         'Practise: “I feel overwhelmed. Can I take five minutes and then get help with the first step?” No audio is recorded.',
         'مشق کریں: “میں بہت دباؤ میں ہوں۔ کیا پانچ منٹ بعد پہلے قدم میں مدد مل سکتی ہے؟” آواز ریکارڈ نہیں ہوتی۔',
+        imageAsset: _s6SupportRequestArt,
         scene: 'home',
         dimension: 'communication',
         sourceRef: 'S6 support practice',
@@ -310,6 +328,7 @@ final scenarios5to8 = <LifeScenario>[
         StoryKind.info,
         'After a pause, you solve one small part with support. The goal was not to erase feelings; it was to respond without harm.',
         'وقفے کے بعد مدد سے ایک چھوٹا حصہ حل ہوتا ہے۔ مقصد احساس مٹانا نہیں بلکہ بغیر نقصان جواب دینا تھا۔',
+        imageAsset: _s6SmallProgressArt,
         scene: 'home',
         sourceRef: 'S6 consequence',
       ),
@@ -318,6 +337,7 @@ final scenarios5to8 = <LifeScenario>[
         StoryKind.terminal,
         'Notice, name, ground, breathe, choose one small action, and ask for support. Feelings are never graded.',
         'محسوس، نام، گراؤنڈ، سانس، ایک چھوٹا عمل اور مدد۔ احساسات پر کبھی نمبر نہیں۔',
+        imageAsset: _s6FinalArt,
         scene: 'home',
         sourceRef: 'Master Spec S6 debrief',
       ),
