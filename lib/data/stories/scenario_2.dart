@@ -3,6 +3,18 @@ import 'package:flutter/material.dart';
 import '../../models/story.dart';
 import '../story_builders.dart';
 
+const _introArt = 'assets/scenarios/s2/s2_intro.jpg';
+const _bullyingPatternArt = 'assets/scenarios/s2/s2_bullying_pattern.jpg';
+const _teachingArt = 'assets/scenarios/s2/s2_teaching.jpg';
+const _boundaryAttemptArt = 'assets/scenarios/s2/s2_boundary_attempt.jpg';
+const _tornNotebookArt = 'assets/scenarios/s2/s2_torn_notebook.jpg';
+const _reportTeacherArt = 'assets/scenarios/s2/s2_report_teacher.jpg';
+const _principalArt = 'assets/scenarios/s2/s2_principal.jpg';
+const _retaliationArt = 'assets/scenarios/s2/s2_retaliation.jpg';
+const _safetyPlanArt = 'assets/scenarios/s2/s2_safety_plan.jpg';
+const _tellParentsArt = 'assets/scenarios/s2/s2_tell_parents.jpg';
+const _resolutionArt = 'assets/scenarios/s2/s2_resolution.jpg';
+
 final scenario2 = LifeScenario(
   id: 's2',
   title: t('The Lunch-Time Bully', 'دوپہر کا بدمعاش'),
@@ -18,6 +30,7 @@ final scenario2 = LifeScenario(
   ],
   icon: Icons.school_rounded,
   color: const Color(0xFF5D78C8),
+  coverImageAsset: _introArt,
   isFree: false,
   weights: const {
     'safety': .25,
@@ -39,6 +52,7 @@ final scenario2 = LifeScenario(
       StoryKind.checklist,
       'Tick what you know: what bullying is, joke versus bullying, who to tell at school, and whether repeated meanness has happened. Every answer proceeds.',
       'جو جانتے ہیں نشان لگائیں: بدمعاشی کیا ہے، مذاق اور بدمعاشی کا فرق، اسکول میں کسے بتانا ہے، اور کیا بار بار برا رویہ ہوا ہے۔ ہر جواب آگے جاتا ہے۔',
+      imageAsset: _introArt,
       choices: [
         yes(
           'definition',
@@ -69,6 +83,7 @@ final scenario2 = LifeScenario(
       StoryKind.choice,
       'Has someone at school repeatedly upset, scared, or isolated you?',
       'کیا اسکول میں کسی نے بار بار آپ کو پریشان، خوفزدہ یا الگ کیا ہے؟',
+      imageAsset: _introArt,
       choices: [
         yes('repeated', 'Yes, it keeps happening', 'ہاں، یہ بار بار ہوتا ہے'),
         yes('once', 'There was one hurtful incident', 'ایک تکلیف دہ واقعہ ہوا'),
@@ -87,6 +102,7 @@ final scenario2 = LifeScenario(
       StoryKind.choice,
       'For three weeks Bilal has called you names, pushed you, knocked down lunch, isolated you, and damaged a notebook. Today the class laughed. The pattern—not Bilal’s occasional kindness—shows bullying.',
       'تین ہفتوں سے بلال نام بگاڑتا، دھکا دیتا، کھانا گراتا، الگ کرتا اور نوٹ بک خراب کرتا ہے۔ آج کلاس ہنسی۔ کبھی کبھار مہربانی نہیں بلکہ مسلسل رویہ بدمعاشی ظاہر کرتا ہے۔',
+      imageAsset: _bullyingPatternArt,
       speaker: narrator,
       scene: 'school',
       character: 'peer',
@@ -120,6 +136,7 @@ final scenario2 = LifeScenario(
       StoryKind.info,
       'Bullying repeats, intends harm or control, and involves a power difference. It includes names, pushing, isolation, rumours, and damaged belongings. A one-time accident, a fair consequence, or a disagreement that is repaired is different. A joke stops when the other person is not laughing.',
       'بدمعاشی بار بار ہوتی، نقصان یا قابو چاہتی اور طاقت کا فرق رکھتی ہے۔ نام بگاڑنا، دھکا، الگ کرنا، افواہ اور چیز خراب کرنا شامل ہیں۔ ایک حادثہ، مناسب سزا یا حل شدہ اختلاف مختلف ہے۔ مذاق تب رک جاتا ہے جب دوسرا نہ ہنسے۔',
+      imageAsset: _teachingArt,
       scene: 'school',
       sourceRef: 'Scenario 02 Scene 3',
     ),
@@ -128,6 +145,7 @@ final scenario2 = LifeScenario(
       StoryKind.choice,
       'What have you tried so far?',
       'آپ نے اب تک کیا کوشش کی؟',
+      imageAsset: _boundaryAttemptArt,
       choices: [
         yes(
           'stop',
@@ -159,6 +177,7 @@ final scenario2 = LifeScenario(
       StoryKind.choice,
       'Bilal tears your notebook. What do you do right now?',
       'بلال نوٹ بک پھاڑتا ہے۔ آپ ابھی کیا کریں گے؟',
+      imageAsset: _tornNotebookArt,
       choices: [
         retry(
           'threaten',
@@ -196,6 +215,7 @@ final scenario2 = LifeScenario(
       StoryKind.mockVoice,
       'Miss Fatima says, “Tell me what happened.” Practise a complete report: Bilal’s name, the actions, three-week duration, witnesses, and how it affected you. Type or use the demo transcript; no audio is recorded.',
       'مس فاطمہ کہتی ہیں، “مجھے بتائیں کیا ہوا۔” مکمل اطلاع کی مشق کریں: بلال کا نام، اعمال، تین ہفتے، گواہ اور اثر۔ لکھیں یا ڈیمو عبارت لیں؛ آواز ریکارڈ نہیں ہوتی۔',
+      imageAsset: _reportTeacherArt,
       scene: 'school',
       character: 'teacher',
       dimension: 'communication',
@@ -206,6 +226,7 @@ final scenario2 = LifeScenario(
       StoryKind.info,
       'Bilal says, “It was a joke.” The principal focuses on the repeated behaviour, applies school rules, and contacts family. Reporting created documentation and consequences.',
       'بلال کہتا ہے، “یہ مذاق تھا۔” پرنسپل مسلسل رویے پر توجہ دے کر اسکول کے اصول لاگو اور گھر والوں سے رابطہ کرتے ہیں۔ اطلاع سے ریکارڈ اور نتیجہ بنا۔',
+      imageAsset: _principalArt,
       scene: 'school',
       character: 'peer',
       sourceRef: 'Scenario 02 Scene 7',
@@ -215,6 +236,7 @@ final scenario2 = LifeScenario(
       StoryKind.choice,
       'The next day Bilal threatens, “You will regret reporting me.” What do you do?',
       'اگلے دن بلال دھمکی دیتا ہے، “بتانے پر پچھتاؤ گے۔” آپ کیا کریں گے؟',
+      imageAsset: _retaliationArt,
       choices: [
         retry(
           'apologize',
@@ -252,6 +274,7 @@ final scenario2 = LifeScenario(
       StoryKind.ranking,
       'Rank the safety plan: tell parents, keep a dated incident record, walk with a group, avoid isolated areas, and trying to befriend Bilal last.',
       'حفاظتی منصوبہ ترتیب دیں: والدین کو بتانا، تاریخ وار ریکارڈ، گروپ کے ساتھ چلنا، سنسان جگہ سے بچنا، اور بلال سے دوستی کی کوشش آخر میں۔',
+      imageAsset: _safetyPlanArt,
       choices: [
         yes('parents', 'Tell parents', 'والدین کو بتائیں'),
         yes('record', 'Keep a dated record', 'تاریخ وار ریکارڈ رکھیں'),
@@ -279,6 +302,7 @@ final scenario2 = LifeScenario(
       StoryKind.choice,
       'Your parents ask what happened. What do you tell them?',
       'والدین پوچھتے ہیں کیا ہوا۔ آپ کیا بتائیں گے؟',
+      imageAsset: _tellParentsArt,
       choices: [
         yes(
           'all',
@@ -310,6 +334,7 @@ final scenario2 = LifeScenario(
       StoryKind.info,
       'Two weeks later: the school has a behaviour plan, both families were contacted, you walk with Asim, and your incident log supports follow-up. Bilal has stopped approaching you.',
       'دو ہفتے بعد: اسکول نے رویے کا منصوبہ بنایا، دونوں خاندان شامل ہوئے، آپ عاصم کے ساتھ چلتے اور واقعات لکھتے ہیں۔ بلال نے قریب آنا چھوڑ دیا ہے۔',
+      imageAsset: _resolutionArt,
       scene: 'school',
       sourceRef: 'Scenario 02 Scene 11',
     ),
@@ -318,6 +343,7 @@ final scenario2 = LifeScenario(
       StoryKind.terminal,
       'Bullying is never your fault. Hoping or retaliating rarely stops it. Report, document dates and witnesses, involve family, and report every retaliation.',
       'بدمعاشی آپ کی غلطی نہیں۔ امید یا بدلہ اسے کم ہی روکتا ہے۔ اطلاع دیں، تاریخ اور گواہ لکھیں، خاندان شامل کریں اور ہر بدلے کی دھمکی بتائیں۔',
+      imageAsset: _resolutionArt,
       scene: 'school',
       sourceRef: 'Scenario 02 Scene 12',
     ),
