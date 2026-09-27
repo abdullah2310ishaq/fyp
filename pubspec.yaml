@@ -27,3 +27,4 @@ flutter:
   assets:
     - assets/scenarios/s1/
     - assets/scenarios/s2/
+    - assets/scenarios/s3/

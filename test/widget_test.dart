@@ -122,6 +122,26 @@ void main() {
     }
   });
 
+  test('scenario three has generated artwork mapped to every step', () {
+    final story = expandedScenarios.firstWhere((item) => item.id == 's3');
+    expect(story.steps.every((step) => step.imageAsset != null), isTrue);
+    expect(story.steps.map((step) => step.imageAsset).toSet(), hasLength(12));
+    expect(story.coverImageAsset, isNotNull);
+  });
+
+  test('every scenario three illustration is bundled and non-empty', () async {
+    final story = expandedScenarios.firstWhere((item) => item.id == 's3');
+    final assets = {
+      ...story.steps.map((step) => step.imageAsset!),
+      story.coverImageAsset!,
+    };
+
+    for (final asset in assets) {
+      final data = await rootBundle.load(asset);
+      expect(data.lengthInBytes, greaterThan(0), reason: asset);
+    }
+  });
+
   test('unsafe choice coaches and safe choice advances', () async {
     final state = AppState();
     await state.load();

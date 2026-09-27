@@ -3,6 +3,19 @@ import 'package:flutter/material.dart';
 import '../../models/story.dart';
 import '../story_builders.dart';
 
+const _introArt = 'assets/scenarios/s3/s3_intro.jpg';
+const _approachArt = 'assets/scenarios/s3/s3_approach.jpg';
+const _warningSignsArt = 'assets/scenarios/s3/s3_warning_signs.jpg';
+const _pressureArt = 'assets/scenarios/s3/s3_pressure.jpg';
+const _confirmCallArt = 'assets/scenarios/s3/s3_confirm_call.jpg';
+const _urgencyExcuseArt = 'assets/scenarios/s3/s3_urgency_excuse.jpg';
+const _parentConfirmedArt = 'assets/scenarios/s3/s3_parent_confirmed.jpg';
+const _escapeToPeopleArt = 'assets/scenarios/s3/s3_escape_to_people.jpg';
+const _safeShopArt = 'assets/scenarios/s3/s3_safe_shop.jpg';
+const _describeArt = 'assets/scenarios/s3/s3_describe.jpg';
+const _reportArt = 'assets/scenarios/s3/s3_report.jpg';
+const _finalArt = 'assets/scenarios/s3/s3_final.jpg';
+
 final scenario3 = LifeScenario(
   id: 's3',
   title: t('The Unexpected Ride', 'اچانک سواری'),
@@ -18,6 +31,7 @@ final scenario3 = LifeScenario(
   ],
   icon: Icons.directions_walk_rounded,
   color: const Color(0xFFE69A3B),
+  coverImageAsset: _introArt,
   isFree: false,
   weights: const {
     'safety': .35,
@@ -40,6 +54,7 @@ final scenario3 = LifeScenario(
       StoryKind.checklist,
       'Tick what you know: your general home area, a parent number, what “stranger” means, and what to do when approached alone. Do not enter real details.',
       'جو جانتے ہیں نشان لگائیں: گھر کا عمومی علاقہ، والدین کا نمبر، اجنبی کا مطلب، اور اکیلے قریب آنے پر کیا کرنا ہے۔ حقیقی معلومات نہ لکھیں۔',
+      imageAsset: _introArt,
       choices: [
         yes('area', 'I know my home area', 'میں گھر کا علاقہ جانتا/جانتی ہوں'),
         yes(
@@ -66,6 +81,7 @@ final scenario3 = LifeScenario(
       StoryKind.choice,
       'A stranger is anyone your parents have not personally introduced and approved. Friendly appearance is not proof. Are you ready?',
       'اجنبی وہ ہے جس سے والدین نے ذاتی تعارف اور اجازت نہ دی ہو۔ دوستانہ شکل ثبوت نہیں۔ کیا آپ تیار ہیں؟',
+      imageAsset: _introArt,
       choices: [
         yes('ready', 'Yes, I understand', 'ہاں، میں سمجھتا/سمجھتی ہوں'),
         yes('unsure', 'I am not fully sure', 'مجھے پوری طرح یقین نہیں'),
@@ -83,6 +99,7 @@ final scenario3 = LifeScenario(
       StoryKind.choice,
       'At 3:30 near school, a well-dressed smiling man called Mr Kareem says your father sent him for an emergency. He knows family names and points to a car.',
       'ساڑھے تین بجے اسکول کے قریب خوش لباس مسکراتا مسٹر کریم کہتا ہے والد نے ہنگامی حالت میں بھیجا ہے۔ وہ خاندان کے نام جانتا اور گاڑی دکھاتا ہے۔',
+      imageAsset: _approachArt,
       speaker: narrator,
       scene: 'road',
       character: 'stranger',
@@ -116,6 +133,7 @@ final scenario3 = LifeScenario(
       StoryKind.info,
       'Unsafe strangers often look helpful, use believable family stories, create urgency, know researched details, offer something useful, and approach isolation. One rule overrides the story: if your parent did not directly confirm, do not go.',
       'غیر محفوظ اجنبی مددگار لگ سکتے، خاندانی کہانی، جلدی، معلوم تفصیل، پیشکش اور تنہائی استعمال کرتے ہیں۔ ایک اصول سب پر غالب ہے: والدین براہِ راست تصدیق نہ کریں تو نہ جائیں۔',
+      imageAsset: _warningSignsArt,
       scene: 'road',
       sourceRef: 'Scenario 03 Scene 3',
     ),
@@ -124,6 +142,7 @@ final scenario3 = LifeScenario(
       StoryKind.choice,
       'Mr Kareem now names your mother and street and pressures you to hurry. Show how your safety alarm feels. Details are not proof and feelings are unscored.',
       'مسٹر کریم اب والدہ اور گلی کا نام لے کر جلدی کرتا ہے۔ اپنا حفاظتی احساس دکھائیں۔ تفصیل ثبوت نہیں اور احساس پر نمبر نہیں۔',
+      imageAsset: _pressureArt,
       scene: 'road',
       character: 'stranger',
       choices: [
@@ -152,6 +171,7 @@ final scenario3 = LifeScenario(
       StoryKind.choice,
       'What is your first response?',
       'آپ کا پہلا جواب کیا ہے؟',
+      imageAsset: _confirmCallArt,
       choices: [
         retry(
           'go',
@@ -189,6 +209,7 @@ final scenario3 = LifeScenario(
       StoryKind.choice,
       'He says there is no time and your father’s battery is dead. What does this reaction mean?',
       'وہ کہتا ہے وقت نہیں اور والد کا فون بند ہے۔ اس ردعمل کا کیا مطلب ہے؟',
+      imageAsset: _urgencyExcuseArt,
       choices: [
         retry(
           'true',
@@ -219,6 +240,7 @@ final scenario3 = LifeScenario(
       StoryKind.info,
       'You call. Your father says he sent nobody. If you could not reach a parent, stay in public and ask a teacher, uniformed worker, known shopkeeper, or local emergency service for help. Never display real phone/address data in this demo.',
       'آپ فون کرتے ہیں۔ والد کہتے ہیں کسی کو نہیں بھیجا۔ رابطہ نہ ہو تو عوامی جگہ رہیں اور استاد، وردی والے کارکن، پہچانے دکاندار یا مقامی ہنگامی مدد سے کہیں۔ ڈیمو میں حقیقی نمبر/پتہ نہ دکھائیں۔',
+      imageAsset: _parentConfirmedArt,
       scene: 'road',
       sourceRef: 'Scenario 03 Scene 7',
     ),
@@ -227,6 +249,7 @@ final scenario3 = LifeScenario(
       StoryKind.choice,
       'Mr Kareem steps closer and reaches toward your arm. What do you do now?',
       'مسٹر کریم قریب آ کر بازو کی طرف ہاتھ بڑھاتا ہے۔ اب کیا کریں؟',
+      imageAsset: _escapeToPeopleArt,
       choices: [
         retry(
           'quiet',
@@ -264,6 +287,7 @@ final scenario3 = LifeScenario(
       StoryKind.choice,
       'Inside a shop, Uncle Rasheed asks what happened. What next?',
       'دکان کے اندر انکل رشید پوچھتے ہیں کیا ہوا۔ اب کیا؟',
+      imageAsset: _safeShopArt,
       choices: [
         yes(
           'tell',
@@ -302,6 +326,7 @@ final scenario3 = LifeScenario(
       StoryKind.mockVoice,
       'Your father arrives. Practise describing the person, exact words, car, time, and location. Use fictional details only. Type or use the demo transcript; no audio is recorded.',
       'والد آتے ہیں۔ شخص، الفاظ، گاڑی، وقت اور جگہ بیان کرنے کی مشق کریں۔ صرف فرضی تفصیل استعمال کریں۔ لکھیں یا ڈیمو عبارت لیں؛ آواز ریکارڈ نہیں ہوتی۔',
+      imageAsset: _describeArt,
       scene: 'market',
       character: 'parent',
       dimension: 'communication',
@@ -312,6 +337,7 @@ final scenario3 = LifeScenario(
       StoryKind.choice,
       'Should the family report the attempted approach?',
       'کیا خاندان کو اس کوشش کی اطلاع دینی چاہیے؟',
+      imageAsset: _reportArt,
       choices: [
         yes(
           'report',
@@ -349,6 +375,7 @@ final scenario3 = LifeScenario(
       StoryKind.terminal,
       'Friendly is not the same as safe. Details are not proof. Directly confirm, resist pressure not to call, make specific noise, run toward people, describe what happened, and report.',
       'دوستانہ ہونا محفوظ ہونے کے برابر نہیں۔ تفصیل ثبوت نہیں۔ براہِ راست تصدیق، فون سے روکنے کے دباؤ کا مقابلہ، واضح آواز، لوگوں کی طرف جانا، تفصیل اور اطلاع یاد رکھیں۔',
+      imageAsset: _finalArt,
       scene: 'market',
       sourceRef: 'Scenario 03 Scene 12',
     ),
