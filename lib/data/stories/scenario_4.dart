@@ -3,6 +3,20 @@ import 'package:flutter/material.dart';
 import '../../models/story.dart';
 import '../story_builders.dart';
 
+const _introArt = 'assets/scenarios/s4/s4_intro.jpg';
+const _groomingContactArt = 'assets/scenarios/s4/s4_grooming_contact.jpg';
+const _warningSignsArt = 'assets/scenarios/s4/s4_warning_signs.jpg';
+const _onlineThreatArt = 'assets/scenarios/s4/s4_online_threat.jpg';
+const _screenshotFirstArt = 'assets/scenarios/s4/s4_screenshot_first.jpg';
+const _evidenceRecordArt = 'assets/scenarios/s4/s4_evidence_record.jpg';
+const _blockReportArt = 'assets/scenarios/s4/s4_block_report.jpg';
+const _tellParentsArt = 'assets/scenarios/s4/s4_tell_parents.jpg';
+const _disclosurePracticeArt = 'assets/scenarios/s4/s4_disclosure_practice.jpg';
+const _officialReportArt = 'assets/scenarios/s4/s4_official_report.jpg';
+const _accountSecurityArt = 'assets/scenarios/s4/s4_account_security.jpg';
+const _newAccountArt = 'assets/scenarios/s4/s4_new_account.jpg';
+const _finalArt = 'assets/scenarios/s4/s4_final.jpg';
+
 final scenario4 = LifeScenario(
   id: 's4',
   title: t('The New Gaming Friend', 'نیا گیمنگ دوست'),
@@ -21,6 +35,7 @@ final scenario4 = LifeScenario(
   ],
   icon: Icons.phonelink_lock_rounded,
   color: const Color(0xFF7B62A3),
+  coverImageAsset: _introArt,
   isFree: false,
   weights: const {
     'safety': .3,
@@ -45,6 +60,7 @@ final scenario4 = LifeScenario(
       StoryKind.checklist,
       'Tick what you know: personal information, blocking, cyberbullying, uncomfortable online contact, and a trusted adult to tell. Every answer continues.',
       'جو جانتے ہیں نشان لگائیں: ذاتی معلومات، بلاک کرنا، سائبر بدمعاشی، بے آرام آن لائن رابطہ، اور قابلِ اعتماد بڑا۔ ہر جواب آگے جاتا ہے۔',
+      imageAsset: _introArt,
       choices: [
         yes(
           'privacy',
@@ -76,6 +92,7 @@ final scenario4 = LifeScenario(
       StoryKind.choice,
       'Online harm can happen in games, chat, messaging, and social apps. How familiar are you with online safety?',
       'آن لائن نقصان کھیل، چیٹ، پیغام اور سوشل ایپس میں ہو سکتا ہے۔ آپ آن لائن حفاظت سے کتنے واقف ہیں؟',
+      imageAsset: _introArt,
       choices: [
         yes(
           'some',
@@ -106,6 +123,7 @@ final scenario4 = LifeScenario(
       StoryKind.choice,
       'After three weeks of friendly game chat, ZeeshanGamer99 admits he is older, asks for a photo, calls you special, and says not to tell parents.',
       'تین ہفتے کی دوستانہ گیم چیٹ کے بعد ZeeshanGamer99 مانتا ہے کہ وہ بڑا ہے، تصویر مانگتا، آپ کو خاص کہتا اور والدین کو نہ بتانے کو کہتا ہے۔',
+      imageAsset: _groomingContactArt,
       speaker: narrator,
       scene: 'online',
       character: 'online',
@@ -139,6 +157,7 @@ final scenario4 = LifeScenario(
       StoryKind.info,
       'Five warning signs: lying about age, asking for a child’s photo, demanding secrecy, building a “special” bond over time, and separating you from parents. Personal information includes real name, school, address, number, photos, family names, area, and routine. Grooming and cyberbullying must both be reported; neither is the child’s fault.',
       'پانچ نشانیاں: عمر کا جھوٹ، بچے کی تصویر، راز، وقت کے ساتھ “خاص” تعلق، اور والدین سے دور کرنا۔ ذاتی معلومات میں اصل نام، اسکول، پتہ، نمبر، تصاویر، خاندان، علاقہ اور معمول شامل ہیں۔ گرومنگ اور سائبر بدمعاشی دونوں بتائیں؛ بچے کی غلطی نہیں۔',
+      imageAsset: _warningSignsArt,
       scene: 'online',
       sourceRef: 'Scenario 04 Scene 3',
     ),
@@ -147,6 +166,7 @@ final scenario4 = LifeScenario(
       StoryKind.choice,
       'New messages threaten to share screenshots and mention your school. Show how you feel. Fear, guilt, confusion, and anger are understandable and unscored. The threat is designed to create panic.',
       'نئے پیغامات اسکرین شاٹس پھیلانے اور اسکول کا ذکر کر کے دھمکی دیتے ہیں۔ احساس دکھائیں۔ خوف، جرم، الجھن اور غصہ سمجھ میں آتے اور بغیر نمبر ہیں۔ دھمکی گھبراہٹ پیدا کرتی ہے۔',
+      imageAsset: _onlineThreatArt,
       scene: 'online',
       character: 'online',
       choices: [
@@ -180,6 +200,7 @@ final scenario4 = LifeScenario(
       StoryKind.choice,
       'What is the first action?',
       'پہلا عمل کیا ہے؟',
+      imageAsset: _screenshotFirstArt,
       choices: [
         retry(
           'photo',
@@ -217,6 +238,7 @@ final scenario4 = LifeScenario(
       StoryKind.multiChoice,
       'Select everything that belongs in the evidence record.',
       'ثبوت میں شامل ہر چیز منتخب کریں۔',
+      imageAsset: _evidenceRecordArt,
       choices: [
         yes(
           'profile',
@@ -247,6 +269,7 @@ final scenario4 = LifeScenario(
       StoryKind.choice,
       'After preserving evidence, what platform actions do you take?',
       'ثبوت محفوظ کرنے کے بعد پلیٹ فارم پر کیا کریں؟',
+      imageAsset: _blockReportArt,
       choices: [
         yes(
           'both',
@@ -284,6 +307,7 @@ final scenario4 = LifeScenario(
       StoryKind.choice,
       'You saved evidence, blocked, and reported. What is the essential next step?',
       'ثبوت، بلاک اور رپورٹ کے بعد ضروری قدم؟',
+      imageAsset: _tellParentsArt,
       choices: [
         yes(
           'parents',
@@ -321,6 +345,7 @@ final scenario4 = LifeScenario(
       StoryKind.mockVoice,
       'Practise telling parents the five points: where you met, three-week timeline, age lie, photo/secrecy request, threats, and the screenshots/block/report actions. Type or use a demo transcript; no audio is recorded.',
       'والدین کو مکمل بات کی مشق کریں: کہاں ملے، تین ہفتے، عمر کا جھوٹ، تصویر/راز، دھمکی، اور اسکرین شاٹ/بلاک/رپورٹ۔ لکھیں یا ڈیمو عبارت لیں؛ آواز ریکارڈ نہیں ہوتی۔',
+      imageAsset: _disclosurePracticeArt,
       scene: 'home',
       character: 'parent',
       dimension: 'communication',
@@ -331,6 +356,7 @@ final scenario4 = LifeScenario(
       StoryKind.choice,
       'What should be shared in an official report?',
       'سرکاری اطلاع میں کیا دینا چاہیے؟',
+      imageAsset: _officialReportArt,
       choices: [
         yes(
           'all',
@@ -362,6 +388,7 @@ final scenario4 = LifeScenario(
       StoryKind.multiChoice,
       'Select the complete account-safety plan.',
       'مکمل اکاؤنٹ حفاظتی منصوبہ منتخب کریں۔',
+      imageAsset: _accountSecurityArt,
       choices: [
         yes(
           'private',
@@ -406,6 +433,7 @@ final scenario4 = LifeScenario(
       StoryKind.choice,
       'Three days later a new account says it is the same person. What do you do?',
       'تین دن بعد نیا اکاؤنٹ خود کو وہی شخص بتاتا ہے۔ کیا کریں؟',
+      imageAsset: _newAccountArt,
       choices: [
         retry(
           'accept',
@@ -443,6 +471,7 @@ final scenario4 = LifeScenario(
       StoryKind.terminal,
       'Online strangers remain strangers. Photo requests, secrecy, age lies, flattery, and threats are danger signs. Screenshot first; block and report; tell parents; secure all accounts; document every new contact.',
       'آن لائن اجنبی، اجنبی ہی رہتا ہے۔ تصویر، راز، عمر کا جھوٹ، خوشامد اور دھمکی خطرہ ہیں۔ پہلے اسکرین شاٹ؛ بلاک و رپورٹ؛ والدین کو بتائیں؛ اکاؤنٹس محفوظ؛ ہر نئے رابطے کا ثبوت۔',
+      imageAsset: _finalArt,
       scene: 'online',
       sourceRef: 'Scenario 04 Scene 13',
     ),
