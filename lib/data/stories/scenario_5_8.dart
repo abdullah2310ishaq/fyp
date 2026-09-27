@@ -3,6 +3,16 @@ import 'package:flutter/material.dart';
 import '../../models/story.dart';
 import '../story_builders.dart';
 
+const _s5IntroArt = 'assets/scenarios/s5/s5_intro.jpg';
+const _s5PeerDareArt = 'assets/scenarios/s5/s5_peer_dare.jpg';
+const _s5FeelingsArt = 'assets/scenarios/s5/s5_feelings.jpg';
+const _s5PressureSignsArt = 'assets/scenarios/s5/s5_pressure_signs.jpg';
+const _s5ClearRefusalArt = 'assets/scenarios/s5/s5_clear_refusal.jpg';
+const _s5RefusalPlanArt = 'assets/scenarios/s5/s5_refusal_plan.jpg';
+const _s5RefusalPracticeArt = 'assets/scenarios/s5/s5_refusal_practice.jpg';
+const _s5SafeExitArt = 'assets/scenarios/s5/s5_safe_exit.jpg';
+const _s5FinalArt = 'assets/scenarios/s5/s5_final.jpg';
+
 final scenarios5to8 = <LifeScenario>[
   LifeScenario(
     id: 's5',
@@ -19,6 +29,7 @@ final scenarios5to8 = <LifeScenario>[
     ],
     icon: Icons.groups_rounded,
     color: const Color(0xFFDE6D83),
+    coverImageAsset: _s5IntroArt,
     isFree: false,
     badge: 'Boundary Hero',
     weights: const {
@@ -33,6 +44,7 @@ final scenarios5to8 = <LifeScenario>[
         StoryKind.checklist,
         'Tick what you know about boundaries, peer pressure, safe exits, and a person you can call. All answers continue.',
         'حدود، ساتھیوں کے دباؤ، محفوظ راستے اور فون کرنے والے شخص کے بارے میں جو جانتے ہیں نشان لگائیں۔ ہر جواب آگے جاتا ہے۔',
+        imageAsset: _s5IntroArt,
         choices: [
           yes(
             'boundary',
@@ -59,6 +71,7 @@ final scenarios5to8 = <LifeScenario>[
         StoryKind.dialogue,
         'At the park, friends dare you to steal a small item from a kiosk and say, “Everyone does it. Do not be boring.”',
         'پارک میں دوست دکان سے چھوٹی چیز اٹھانے کا چیلنج دیتے اور کہتے ہیں، “سب کرتے ہیں، بور نہ بنو۔”',
+        imageAsset: _s5PeerDareArt,
         speaker: narrator,
         scene: 'park',
         character: 'peer',
@@ -69,6 +82,7 @@ final scenarios5to8 = <LifeScenario>[
         StoryKind.feeling,
         'Show how the pressure feels. Wanting to belong, worry, or anger are all normal and unscored.',
         'دباؤ کا احساس دکھائیں۔ شامل ہونے کی خواہش، فکر یا غصہ سب معمول اور بغیر نمبر ہیں۔',
+        imageAsset: _s5FeelingsArt,
         scene: 'park',
         unscored: true,
         sourceRef: 'S5 editorial scene 2',
@@ -78,6 +92,7 @@ final scenarios5to8 = <LifeScenario>[
         StoryKind.info,
         'Pressure often uses teasing, urgency, “everyone does it,” or threats of exclusion. A real friend accepts your boundary. A short no is enough.',
         'دباؤ مذاق، جلدی، “سب کرتے ہیں” یا الگ کرنے کی دھمکی استعمال کرتا ہے۔ سچا دوست حد مانتا ہے۔ مختصر انکار کافی ہے۔',
+        imageAsset: _s5PressureSignsArt,
         scene: 'park',
         sourceRef: 'S5 editorial scene 3',
       ),
@@ -86,6 +101,7 @@ final scenarios5to8 = <LifeScenario>[
         StoryKind.choice,
         'What is the strongest first response?',
         'سب سے مضبوط پہلا جواب؟',
+        imageAsset: _s5ClearRefusalArt,
         choices: [
           yes(
             'no',
@@ -116,6 +132,7 @@ final scenarios5to8 = <LifeScenario>[
         StoryKind.ranking,
         'Rank the refusal plan: clear no, repeat once, offer a safe alternative, leave toward people, contact a trusted adult.',
         'انکاری منصوبہ ترتیب دیں: صاف نہیں، ایک بار دہرانا، محفوظ متبادل، لوگوں کی طرف جانا، قابلِ اعتماد بڑے سے رابطہ۔',
+        imageAsset: _s5RefusalPlanArt,
         choices: [
           yes('no', 'Say a clear no', 'صاف انکار'),
           yes('repeat', 'Repeat without arguing', 'بحث کے بغیر دہرائیں'),
@@ -133,6 +150,7 @@ final scenarios5to8 = <LifeScenario>[
         StoryKind.mockVoice,
         'Practise your refusal in one calm sentence. Use the demo transcript if speaking or typing feels hard; no audio is recorded.',
         'ایک پرسکون جملے میں انکار کی مشق کریں۔ مشکل ہو تو ڈیمو عبارت لیں؛ آواز ریکارڈ نہیں ہوتی۔',
+        imageAsset: _s5RefusalPracticeArt,
         scene: 'park',
         dimension: 'communication',
         sourceRef: 'S5 editorial refusal practice',
@@ -142,6 +160,7 @@ final scenarios5to8 = <LifeScenario>[
         StoryKind.choice,
         'A friend follows and calls you names. What now?',
         'ایک دوست پیچھے آ کر نام بگاڑتا ہے۔ اب؟',
+        imageAsset: _s5SafeExitArt,
         choices: [
           yes(
             'safe',
@@ -172,6 +191,7 @@ final scenarios5to8 = <LifeScenario>[
         StoryKind.terminal,
         'Your no is complete. Use a broken-record refusal, offer a safe alternative once, leave continued pressure, and tell a trusted adult.',
         'آپ کا انکار مکمل ہے۔ ایک ہی انکار دہرائیں، ایک محفوظ متبادل دیں، مسلسل دباؤ سے نکلیں اور قابلِ اعتماد بڑے کو بتائیں۔',
+        imageAsset: _s5FinalArt,
         scene: 'park',
         sourceRef: 'Master Spec S5 debrief',
       ),
