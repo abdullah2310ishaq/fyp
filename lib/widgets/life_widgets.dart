@@ -1,8 +1,25 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../core/life_theme.dart';
+
+/// Keeps Home as the final app page before the system can exit.
+class HomeFirstBackScope extends StatelessWidget {
+  const HomeFirstBackScope({super.key, required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => PopScope(
+    canPop: false,
+    onPopInvokedWithResult: (didPop, result) {
+      if (!didPop) context.go('/home');
+    },
+    child: child,
+  );
+}
 
 class LifeLogo extends StatelessWidget {
   const LifeLogo({super.key, this.size = 72});

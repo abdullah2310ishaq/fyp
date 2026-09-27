@@ -398,6 +398,81 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('bottom navigation switches tabs without stacking pages', (
+    tester,
+  ) async {
+    final router = GoRouter(
+      initialLocation: '/home',
+      routes: [
+        GoRoute(
+          path: '/home',
+          builder: (_, _) => const Scaffold(
+            body: Text('Home page'),
+            bottomNavigationBar: LifeNavigation(index: 0),
+          ),
+        ),
+        GoRoute(
+          path: '/profile',
+          builder: (_, _) => const HomeFirstBackScope(
+            child: Scaffold(
+              body: Text('Progress page'),
+              bottomNavigationBar: LifeNavigation(index: 1),
+            ),
+          ),
+        ),
+        GoRoute(
+          path: '/settings',
+          builder: (_, _) => const HomeFirstBackScope(
+            child: Scaffold(
+              body: Text('Settings page'),
+              bottomNavigationBar: LifeNavigation(index: 2),
+            ),
+          ),
+        ),
+      ],
+    );
+    addTearDown(router.dispose);
+
+    await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+    await tester.tap(find.byKey(const ValueKey('life-nav-1')));
+    await tester.pumpAndSettle();
+    expect(find.text('Progress page'), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('life-nav-2')));
+    await tester.pumpAndSettle();
+    expect(find.text('Settings page'), findsOneWidget);
+    expect(router.canPop(), isFalse);
+  });
+
+  testWidgets('system back visits Home before the app can exit', (
+    tester,
+  ) async {
+    final router = GoRouter(
+      initialLocation: '/settings',
+      routes: [
+        GoRoute(
+          path: '/home',
+          builder: (_, _) => const Scaffold(body: Text('Safe Home')),
+        ),
+        GoRoute(
+          path: '/settings',
+          builder: (_, _) => const HomeFirstBackScope(
+            child: Scaffold(body: Text('Settings page')),
+          ),
+        ),
+      ],
+    );
+    addTearDown(router.dispose);
+
+    await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+    expect(find.text('Settings page'), findsOneWidget);
+
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+    expect(find.text('Safe Home'), findsOneWidget);
+    expect(router.routeInformationProvider.value.uri.path, '/home');
+  });
+
   testWidgets('body map recognises the story zones as unsafe', (tester) async {
     List<String>? answer;
     await tester.pumpWidget(

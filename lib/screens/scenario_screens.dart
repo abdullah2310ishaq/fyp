@@ -213,11 +213,13 @@ class _SimulationScreenState extends State<SimulationScreen> {
     final story = state.activeScenario;
     final step = state.activeStep;
     if (story == null || step == null) {
-      return Scaffold(
-        body: Center(
-          child: FilledButton(
-            onPressed: () => context.go('/home'),
-            child: Text(state.tr('Back to home', 'گھر واپس جائیں')),
+      return HomeFirstBackScope(
+        child: Scaffold(
+          body: Center(
+            child: FilledButton(
+              onPressed: () => context.go('/home'),
+              child: Text(state.tr('Back to home', 'گھر واپس جائیں')),
+            ),
           ),
         ),
       );
@@ -233,149 +235,158 @@ class _SimulationScreenState extends State<SimulationScreen> {
     }
     final ur = state.isUrdu;
     final progress = (state.activeStepIndex + 1) / story.steps.length;
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          tooltip: state.tr('Pause and leave', 'روکیں اور نکلیں'),
-          onPressed: () => _pause(context),
-          icon: const Icon(Icons.close_rounded),
-        ),
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              story.title.get(ur),
-              style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w900),
+    return HomeFirstBackScope(
+      child: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            tooltip: state.tr('Pause and leave', 'روکیں اور نکلیں'),
+            onPressed: () => _pause(context),
+            icon: const Icon(Icons.close_rounded),
+          ),
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                story.title.get(ur),
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+              Text(
+                '${state.activeStepIndex + 1} of ${story.steps.length}',
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            IconButton(
+              tooltip: state.tr('Hint — 10 coins', 'اشارہ — ۱۰ سکے'),
+              onPressed: () async {
+                final message = await state.useHint();
+                if (context.mounted) {
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text(message)));
+                }
+              },
+              icon: Badge(
+                label: Text('${3 - state.hintsUsed}'),
+                isLabelVisible: state.isPremium,
+                child: const Icon(Icons.lightbulb_outline_rounded),
+              ),
             ),
-            Text(
-              '${state.activeStepIndex + 1} of ${story.steps.length}',
-              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+            IconButton(
+              tooltip: state.tr('Help', 'مدد'),
+              onPressed: () => showHelpSheet(context),
+              icon: const Icon(Icons.help_outline_rounded),
             ),
           ],
-        ),
-        actions: [
-          IconButton(
-            tooltip: state.tr('Hint — 10 coins', 'اشارہ — ۱۰ سکے'),
-            onPressed: () async {
-              final message = await state.useHint();
-              if (context.mounted) {
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(SnackBar(content: Text(message)));
-              }
-            },
-            icon: Badge(
-              label: Text('${3 - state.hintsUsed}'),
-              isLabelVisible: state.isPremium,
-              child: const Icon(Icons.lightbulb_outline_rounded),
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(5),
+            child: LinearProgressIndicator(
+              value: progress,
+              minHeight: 5,
+              backgroundColor: LifeColors.mint,
             ),
           ),
-          IconButton(
-            tooltip: state.tr('Help', 'مدد'),
-            onPressed: () => showHelpSheet(context),
-            icon: const Icon(Icons.help_outline_rounded),
-          ),
-        ],
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(5),
-          child: LinearProgressIndicator(
-            value: progress,
-            minHeight: 5,
-            backgroundColor: LifeColors.mint,
-          ),
         ),
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.only(bottom: 30),
-          child: PageWidth(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                StoryStage(
-                  scene: step.scene,
-                  character: step.character,
-                  speaker: step.speaker.get(ur),
-                  imageAsset: step.imageAsset,
-                  reduceMotion: state.reduceMotion,
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  children: List.generate(
-                    story.steps.length,
-                    (index) => Expanded(
-                      child: AnimatedContainer(
-                        duration: state.reduceMotion
-                            ? Duration.zero
-                            : const Duration(milliseconds: 180),
-                        height: 6,
-                        margin: const EdgeInsets.symmetric(horizontal: 2),
-                        decoration: BoxDecoration(
-                          color: index <= state.activeStepIndex
-                              ? LifeColors.teal
-                              : Colors.black12,
-                          borderRadius: BorderRadius.circular(99),
+        body: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.only(bottom: 30),
+            child: PageWidth(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  StoryStage(
+                    scene: step.scene,
+                    character: step.character,
+                    speaker: step.speaker.get(ur),
+                    imageAsset: step.imageAsset,
+                    reduceMotion: state.reduceMotion,
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: List.generate(
+                      story.steps.length,
+                      (index) => Expanded(
+                        child: AnimatedContainer(
+                          duration: state.reduceMotion
+                              ? Duration.zero
+                              : const Duration(milliseconds: 180),
+                          height: 6,
+                          margin: const EdgeInsets.symmetric(horizontal: 2),
+                          decoration: BoxDecoration(
+                            color: index <= state.activeStepIndex
+                                ? LifeColors.teal
+                                : Colors.black12,
+                            borderRadius: BorderRadius.circular(99),
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 16),
-                AnimatedSwitcher(
-                  duration: state.reduceMotion
-                      ? Duration.zero
-                      : const Duration(milliseconds: 260),
-                  child: SoftCard(
-                    key: ValueKey(step.id),
-                    color: step.speaker == const LocalText('Dost', 'دوست')
-                        ? LifeColors.mint
-                        : Colors.white,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            CircleAvatar(
-                              radius: 16,
-                              backgroundColor: step.speaker.en == 'Dost'
-                                  ? LifeColors.teal
-                                  : story.color,
-                              child: Icon(
-                                step.speaker.en == 'Dost'
-                                    ? Icons.auto_awesome_rounded
-                                    : Icons.chat_bubble_rounded,
-                                size: 17,
-                                color: Colors.white,
+                  const SizedBox(height: 16),
+                  AnimatedSwitcher(
+                    duration: state.reduceMotion
+                        ? Duration.zero
+                        : const Duration(milliseconds: 260),
+                    child: SoftCard(
+                      key: ValueKey(step.id),
+                      color: step.speaker == const LocalText('Dost', 'دوست')
+                          ? LifeColors.mint
+                          : Colors.white,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              CircleAvatar(
+                                radius: 16,
+                                backgroundColor: step.speaker.en == 'Dost'
+                                    ? LifeColors.teal
+                                    : story.color,
+                                child: Icon(
+                                  step.speaker.en == 'Dost'
+                                      ? Icons.auto_awesome_rounded
+                                      : Icons.chat_bubble_rounded,
+                                  size: 17,
+                                  color: Colors.white,
+                                ),
                               ),
-                            ),
-                            const SizedBox(width: 9),
-                            Text(
-                              step.speaker.get(ur),
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w900,
-                                color: LifeColors.tealDark,
+                              const SizedBox(width: 9),
+                              Text(
+                                step.speaker.get(ur),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w900,
+                                  color: LifeColors.tealDark,
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-                        TypewriterText(
-                          text: step.text.get(ur),
-                          style: Theme.of(context).textTheme.bodyLarge,
-                          reduceMotion: state.reduceMotion,
-                        ),
-                      ],
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          TypewriterText(
+                            text: step.text.get(ur),
+                            style: Theme.of(context).textTheme.bodyLarge,
+                            reduceMotion: state.reduceMotion,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 16),
-                if (state.coaching != null)
-                  _CoachingCard(text: state.coaching!),
-                if (state.coaching != null) const SizedBox(height: 12),
-                if (localFeedback != null) _CoachingCard(text: localFeedback!),
-                if (localFeedback != null) const SizedBox(height: 12),
-                _interaction(context, state, story, step),
-              ],
+                  const SizedBox(height: 16),
+                  if (state.coaching != null)
+                    _CoachingCard(text: state.coaching!),
+                  if (state.coaching != null) const SizedBox(height: 12),
+                  if (localFeedback != null)
+                    _CoachingCard(text: localFeedback!),
+                  if (localFeedback != null) const SizedBox(height: 12),
+                  _interaction(context, state, story, step),
+                ],
+              ),
             ),
           ),
         ),

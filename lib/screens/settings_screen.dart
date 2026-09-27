@@ -13,114 +13,122 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final state = context.watch<AppState>();
-    return Scaffold(
-      appBar: AppBar(title: const Text('Settings')),
-      bottomNavigationBar: const LifeNavigation(index: 2),
-      body: ListView(
-        padding: const EdgeInsets.fromLTRB(20, 0, 20, 28),
-        children: [
-          PageWidth(
-            padding: EdgeInsets.zero,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(
-                  'Experience',
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                const SizedBox(height: 10),
-                SoftCard(
-                  padding: EdgeInsets.zero,
-                  child: Column(
-                    children: [
-                      SwitchListTile(
-                        secondary: const Icon(Icons.translate_rounded),
-                        title: const Text(
-                          'Urdu / اردو',
-                          style: TextStyle(fontWeight: FontWeight.w800),
-                        ),
-                        subtitle: Text(
-                          state.isPremium
-                              ? 'Switch app and story direction'
-                              : 'Available in premium demo mode',
-                        ),
-                        value: state.isUrdu,
-                        onChanged: state.isPremium
-                            ? state.setLanguage
-                            : (_) => context.push('/paywall'),
-                      ),
-                      const Divider(height: 1),
-                      SwitchListTile(
-                        secondary: const Icon(Icons.volume_up_rounded),
-                        title: const Text(
-                          'Sound',
-                          style: TextStyle(fontWeight: FontWeight.w800),
-                        ),
-                        subtitle: const Text('Interface sound setting (demo)'),
-                        value: state.soundOn,
-                        onChanged: state.setSound,
-                      ),
-                      const Divider(height: 1),
-                      SwitchListTile(
-                        secondary: const Icon(Icons.motion_photos_off_rounded),
-                        title: const Text(
-                          'Reduce motion',
-                          style: TextStyle(fontWeight: FontWeight.w800),
-                        ),
-                        subtitle: const Text('Use instant, calmer transitions'),
-                        value: state.reduceMotion,
-                        onChanged: state.setReduceMotion,
-                      ),
-                    ],
+    return HomeFirstBackScope(
+      child: Scaffold(
+        appBar: AppBar(title: const Text('Settings')),
+        bottomNavigationBar: const LifeNavigation(index: 2),
+        body: ListView(
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 28),
+          children: [
+            PageWidth(
+              padding: EdgeInsets.zero,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    'Experience',
+                    style: Theme.of(context).textTheme.titleLarge,
                   ),
-                ),
-                const SizedBox(height: 24),
-                Text(
-                  'Grown-up demo controls',
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                const SizedBox(height: 10),
-                SoftCard(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      const Text(
-                        'Subscription, coins, scene shortcuts, and reset are behind a grown-up maths gate.',
-                      ),
-                      const SizedBox(height: 14),
-                      OutlinedButton.icon(
-                        onPressed: () => _openDemoPanel(context),
-                        icon: const Icon(Icons.admin_panel_settings_rounded),
-                        label: const Text('Open grown-up demo panel'),
-                      ),
-                    ],
+                  const SizedBox(height: 10),
+                  SoftCard(
+                    padding: EdgeInsets.zero,
+                    child: Column(
+                      children: [
+                        SwitchListTile(
+                          secondary: const Icon(Icons.translate_rounded),
+                          title: const Text(
+                            'Urdu / اردو',
+                            style: TextStyle(fontWeight: FontWeight.w800),
+                          ),
+                          subtitle: Text(
+                            state.isPremium
+                                ? 'Switch app and story direction'
+                                : 'Available in premium demo mode',
+                          ),
+                          value: state.isUrdu,
+                          onChanged: state.isPremium
+                              ? state.setLanguage
+                              : (_) => context.push('/paywall'),
+                        ),
+                        const Divider(height: 1),
+                        SwitchListTile(
+                          secondary: const Icon(Icons.volume_up_rounded),
+                          title: const Text(
+                            'Sound',
+                            style: TextStyle(fontWeight: FontWeight.w800),
+                          ),
+                          subtitle: const Text(
+                            'Interface sound setting (demo)',
+                          ),
+                          value: state.soundOn,
+                          onChanged: state.setSound,
+                        ),
+                        const Divider(height: 1),
+                        SwitchListTile(
+                          secondary: const Icon(
+                            Icons.motion_photos_off_rounded,
+                          ),
+                          title: const Text(
+                            'Reduce motion',
+                            style: TextStyle(fontWeight: FontWeight.w800),
+                          ),
+                          subtitle: const Text(
+                            'Use instant, calmer transitions',
+                          ),
+                          value: state.reduceMotion,
+                          onChanged: state.setReduceMotion,
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(height: 24),
-                Text(
-                  'About LifeIQ',
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                const SizedBox(height: 10),
-                const SoftCard(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'LifeIQ offline FYP prototype',
-                        style: TextStyle(fontWeight: FontWeight.w900),
-                      ),
-                      SizedBox(height: 8),
-                      Text(
-                        'All accounts, scores, purchases, conversations, and rewards are simulated on this device. The app is educational practice, not an emergency service, mental-health assessment, or replacement for a trusted adult.',
-                      ),
-                    ],
+                  const SizedBox(height: 24),
+                  Text(
+                    'Grown-up demo controls',
+                    style: Theme.of(context).textTheme.titleLarge,
                   ),
-                ),
-              ],
+                  const SizedBox(height: 10),
+                  SoftCard(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        const Text(
+                          'Subscription, coins, scene shortcuts, and reset are behind a grown-up maths gate.',
+                        ),
+                        const SizedBox(height: 14),
+                        OutlinedButton.icon(
+                          onPressed: () => _openDemoPanel(context),
+                          icon: const Icon(Icons.admin_panel_settings_rounded),
+                          label: const Text('Open grown-up demo panel'),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Text(
+                    'About LifeIQ',
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  const SizedBox(height: 10),
+                  const SoftCard(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'LifeIQ offline FYP prototype',
+                          style: TextStyle(fontWeight: FontWeight.w900),
+                        ),
+                        SizedBox(height: 8),
+                        Text(
+                          'All accounts, scores, purchases, conversations, and rewards are simulated on this device. The app is educational practice, not an emergency service, mental-health assessment, or replacement for a trusted adult.',
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

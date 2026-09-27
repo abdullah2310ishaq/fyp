@@ -215,109 +215,93 @@ class ScenarioCard extends StatelessWidget {
       button: true,
       label:
           '${story.title.get(state.isUrdu)}, ${locked ? 'locked' : 'available'}',
-      child: InkWell(
-        onTap: () => context.push('/intro/${story.id}'),
-        borderRadius: BorderRadius.circular(22),
-        child: Ink(
-          padding: const EdgeInsets.all(14),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(22),
-            boxShadow: const [
-              BoxShadow(
-                color: Color(0x1022304A),
-                blurRadius: 16,
-                offset: Offset(0, 7),
-              ),
-            ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+      child: Material(
+        color: story.color.withValues(alpha: .16),
+        elevation: 3,
+        shadowColor: const Color(0x3322304A),
+        borderRadius: BorderRadius.circular(24),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: () => context.push('/intro/${story.id}'),
+          child: Stack(
+            fit: StackFit.expand,
             children: [
               if (story.coverImageAsset != null)
-                Stack(
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(14),
-                      child: SizedBox(
-                        width: double.infinity,
-                        height: 76,
-                        child: Image.asset(
-                          story.coverImageAsset!,
-                          fit: BoxFit.cover,
-                          alignment: const Alignment(-.25, 0),
-                          errorBuilder: (_, _, _) => ColoredBox(
-                            color: story.color.withValues(alpha: .15),
-                            child: Icon(story.icon, color: story.color),
-                          ),
-                        ),
-                      ),
-                    ),
-                    if (score != null)
-                      PositionedDirectional(
-                        top: 6,
-                        end: 6,
-                        child: Pill(
-                          icon: CupertinoIcons.star_fill,
-                          label: '$score',
-                          color: LifeColors.mint,
-                        ),
-                      ),
-                  ],
+                Image.asset(
+                  story.coverImageAsset!,
+                  fit: BoxFit.cover,
+                  alignment: Alignment.center,
+                  filterQuality: FilterQuality.medium,
+                  errorBuilder: (_, _, _) => _fallbackCover(),
                 )
               else
-                Row(
+                _fallbackCover(),
+              const DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    stops: [0, .42, 1],
+                    colors: [
+                      Color(0x12000000),
+                      Color(0x25000000),
+                      Color(0xE817263B),
+                    ],
+                  ),
+                ),
+              ),
+              PositionedDirectional(
+                top: 10,
+                start: 10,
+                child: _CardBadge(
+                  icon: story.icon,
+                  label: '${state.isUrdu ? 'کہانی' : 'Story'} $number',
+                ),
+              ),
+              PositionedDirectional(
+                top: 10,
+                end: 10,
+                child: _CardBadge(
+                  icon: locked
+                      ? CupertinoIcons.lock_fill
+                      : CupertinoIcons.star_fill,
+                  label: locked ? '' : (score == null ? '—' : '$score'),
+                ),
+              ),
+              PositionedDirectional(
+                start: 14,
+                end: 14,
+                bottom: 14,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      width: 44,
-                      height: 44,
-                      decoration: BoxDecoration(
-                        color: story.color.withValues(alpha: .15),
-                        borderRadius: BorderRadius.circular(14),
+                    Text(
+                      story.title.get(state.isUrdu),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        height: 1.08,
+                        fontWeight: FontWeight.w900,
+                        shadows: [
+                          Shadow(color: Color(0x66000000), blurRadius: 8),
+                        ],
                       ),
-                      child: Icon(story.icon, color: story.color, size: 25),
                     ),
-                    const Spacer(),
-                    if (locked)
-                      const Icon(
-                        CupertinoIcons.lock_fill,
-                        color: Colors.black45,
-                      )
-                    else if (score != null)
-                      Pill(
-                        icon: CupertinoIcons.star_fill,
-                        label: '$score',
-                        color: LifeColors.mint,
+                    const SizedBox(height: 6),
+                    Text(
+                      story.category.get(state.isUrdu),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: Color(0xFFE8F2F1),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
                       ),
+                    ),
                   ],
-                ),
-              const Spacer(),
-              Text(
-                '${state.isUrdu ? 'کہانی' : 'Story'} $number',
-                style: TextStyle(
-                  color: story.color,
-                  fontWeight: FontWeight.w900,
-                ),
-              ),
-              const SizedBox(height: 5),
-              Text(
-                story.title.get(state.isUrdu),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  fontSize: 16,
-                  height: 1.12,
-                  fontWeight: FontWeight.w900,
-                ),
-              ),
-              const SizedBox(height: 7),
-              Text(
-                story.category.get(state.isUrdu),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  color: Colors.black54,
-                  fontWeight: FontWeight.w600,
                 ),
               ),
             ],
@@ -326,6 +310,58 @@ class ScenarioCard extends StatelessWidget {
       ),
     );
   }
+
+  Widget _fallbackCover() => ColoredBox(
+    color: story.color.withValues(alpha: .22),
+    child: Center(
+      child: Icon(
+        story.icon,
+        color: story.color.withValues(alpha: .8),
+        size: 70,
+      ),
+    ),
+  );
+}
+
+class _CardBadge extends StatelessWidget {
+  const _CardBadge({required this.icon, required this.label});
+
+  final IconData icon;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    constraints: const BoxConstraints(minHeight: 30),
+    padding: EdgeInsets.fromLTRB(9, 6, label.isEmpty ? 9 : 11, 6),
+    decoration: BoxDecoration(
+      color: Colors.white.withValues(alpha: .94),
+      borderRadius: BorderRadius.circular(99),
+      boxShadow: const [
+        BoxShadow(
+          color: Color(0x25000000),
+          blurRadius: 8,
+          offset: Offset(0, 3),
+        ),
+      ],
+    ),
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 15, color: LifeColors.navy),
+        if (label.isNotEmpty) ...[
+          const SizedBox(width: 5),
+          Text(
+            label,
+            style: const TextStyle(
+              color: LifeColors.navy,
+              fontSize: 11,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+        ],
+      ],
+    ),
+  );
 }
 
 class LifeNavigation extends StatelessWidget {
@@ -369,6 +405,7 @@ class LifeNavigation extends StatelessWidget {
                 child: Material(
                   color: Colors.transparent,
                   child: InkWell(
+                    key: ValueKey('life-nav-$itemIndex'),
                     borderRadius: BorderRadius.circular(26),
                     onTap: () {
                       if (selected) return;
@@ -430,200 +467,204 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final state = context.watch<AppState>();
-    return Scaffold(
-      appBar: AppBar(title: const Text('My progress')),
-      bottomNavigationBar: const LifeNavigation(index: 1),
-      body: ListView(
-        padding: const EdgeInsets.fromLTRB(20, 4, 20, 28),
-        children: [
-          PageWidth(
-            padding: EdgeInsets.zero,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                SoftCard(
-                  color: LifeColors.mint,
-                  child: Row(
-                    children: [
-                      CircleAvatar(
-                        radius: 38,
-                        backgroundColor: LifeColors.yellow,
-                        child: Icon(
-                          state.avatar == 'girl'
-                              ? Icons.girl_rounded
-                              : Icons.boy_rounded,
-                          size: 54,
-                          color: LifeColors.navy,
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              state.childName,
-                              style: Theme.of(context).textTheme.headlineMedium,
-                            ),
-                            Text(
-                              'Age ${state.childAge} • ${state.isPremium ? 'Premium demo' : 'Free demo'}',
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 18),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _Stat(
-                        value: '${state.bestScores.length}/8',
-                        label: 'Stories',
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: _Stat(value: '${state.coins}', label: 'Coins'),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: _Stat(value: '${state.streak}', label: 'Streak'),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 24),
-                Text(
-                  'Badge shelf',
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                const SizedBox(height: 12),
-                if (state.badges.isEmpty)
-                  const SoftCard(
-                    child: Text(
-                      'Complete a story with a score of 75+ to earn your first practice badge.',
-                    ),
-                  )
-                else
-                  Wrap(
-                    spacing: 10,
-                    runSpacing: 10,
-                    children: state.badges
-                        .map(
-                          (badge) => Pill(
-                            icon: Icons.workspace_premium_rounded,
-                            label: badge,
-                            color: LifeColors.yellow.withValues(alpha: .5),
-                          ),
-                        )
-                        .toList(),
-                  ),
-                const SizedBox(height: 24),
-                Text(
-                  'Score history',
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                const SizedBox(height: 12),
-                if (!state.isPremium)
+    return HomeFirstBackScope(
+      child: Scaffold(
+        appBar: AppBar(title: const Text('My progress')),
+        bottomNavigationBar: const LifeNavigation(index: 1),
+        body: ListView(
+          padding: const EdgeInsets.fromLTRB(20, 4, 20, 28),
+          children: [
+            PageWidth(
+              padding: EdgeInsets.zero,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
                   SoftCard(
+                    color: LifeColors.mint,
                     child: Row(
                       children: [
-                        const Icon(
-                          Icons.lock_rounded,
-                          color: LifeColors.purple,
-                        ),
-                        const SizedBox(width: 12),
-                        const Expanded(
-                          child: Text(
-                            'Score history is available in premium demo mode.',
+                        CircleAvatar(
+                          radius: 38,
+                          backgroundColor: LifeColors.yellow,
+                          child: Icon(
+                            state.avatar == 'girl'
+                                ? Icons.girl_rounded
+                                : Icons.boy_rounded,
+                            size: 54,
+                            color: LifeColors.navy,
                           ),
                         ),
-                        TextButton(
-                          onPressed: () => context.push('/paywall'),
-                          child: const Text('View'),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                state.childName,
+                                style: Theme.of(
+                                  context,
+                                ).textTheme.headlineMedium,
+                              ),
+                              Text(
+                                'Age ${state.childAge} • ${state.isPremium ? 'Premium demo' : 'Free demo'}',
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
-                  )
-                else ...[
-                  ...expandedScenarios
-                      .where((item) => state.bestScores.containsKey(item.id))
-                      .map(
-                        (item) => Padding(
-                          padding: const EdgeInsets.only(bottom: 10),
-                          child: SoftCard(
-                            child: Row(
-                              children: [
-                                Icon(item.icon, color: item.color),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        item.title.get(state.isUrdu),
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.w800,
+                  ),
+                  const SizedBox(height: 18),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _Stat(
+                          value: '${state.bestScores.length}/8',
+                          label: 'Stories',
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: _Stat(value: '${state.coins}', label: 'Coins'),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: _Stat(value: '${state.streak}', label: 'Streak'),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+                  Text(
+                    'Badge shelf',
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  const SizedBox(height: 12),
+                  if (state.badges.isEmpty)
+                    const SoftCard(
+                      child: Text(
+                        'Complete a story with a score of 75+ to earn your first practice badge.',
+                      ),
+                    )
+                  else
+                    Wrap(
+                      spacing: 10,
+                      runSpacing: 10,
+                      children: state.badges
+                          .map(
+                            (badge) => Pill(
+                              icon: Icons.workspace_premium_rounded,
+                              label: badge,
+                              color: LifeColors.yellow.withValues(alpha: .5),
+                            ),
+                          )
+                          .toList(),
+                    ),
+                  const SizedBox(height: 24),
+                  Text(
+                    'Score history',
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  const SizedBox(height: 12),
+                  if (!state.isPremium)
+                    SoftCard(
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.lock_rounded,
+                            color: LifeColors.purple,
+                          ),
+                          const SizedBox(width: 12),
+                          const Expanded(
+                            child: Text(
+                              'Score history is available in premium demo mode.',
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () => context.push('/paywall'),
+                            child: const Text('View'),
+                          ),
+                        ],
+                      ),
+                    )
+                  else ...[
+                    ...expandedScenarios
+                        .where((item) => state.bestScores.containsKey(item.id))
+                        .map(
+                          (item) => Padding(
+                            padding: const EdgeInsets.only(bottom: 10),
+                            child: SoftCard(
+                              child: Row(
+                                children: [
+                                  Icon(item.icon, color: item.color),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          item.title.get(state.isUrdu),
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.w800,
+                                          ),
                                         ),
-                                      ),
-                                      const SizedBox(height: 3),
-                                      Text(
-                                        (state.scoreHistory[item.id] ??
-                                                const <int>[])
-                                            .map((value) => '$value')
-                                            .join('  •  '),
-                                        style: const TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.black54,
+                                        const SizedBox(height: 3),
+                                        Text(
+                                          (state.scoreHistory[item.id] ??
+                                                  const <int>[])
+                                              .map((value) => '$value')
+                                              .join('  •  '),
+                                          style: const TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.black54,
+                                          ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                Text(
-                                  '${state.bestScores[item.id]}',
-                                  style: const TextStyle(
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.w900,
-                                    color: LifeColors.teal,
+                                  Text(
+                                    '${state.bestScores[item.id]}',
+                                    style: const TextStyle(
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.w900,
+                                      color: LifeColors.teal,
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                  const SizedBox(height: 20),
-                  Text(
-                    'Demo billing history',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  const SizedBox(height: 10),
-                  const SoftCard(
-                    child: ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      leading: CircleAvatar(
-                        backgroundColor: LifeColors.mint,
-                        child: Icon(
-                          Icons.receipt_long_rounded,
-                          color: LifeColors.teal,
-                        ),
-                      ),
-                      title: Text(
-                        'Premium demo activation',
-                        style: TextStyle(fontWeight: FontWeight.w900),
-                      ),
-                      subtitle: Text('Simulated locally • No charge'),
-                      trailing: Text('PKR 0'),
+                    const SizedBox(height: 20),
+                    Text(
+                      'Demo billing history',
+                      style: Theme.of(context).textTheme.titleLarge,
                     ),
-                  ),
+                    const SizedBox(height: 10),
+                    const SoftCard(
+                      child: ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        leading: CircleAvatar(
+                          backgroundColor: LifeColors.mint,
+                          child: Icon(
+                            Icons.receipt_long_rounded,
+                            color: LifeColors.teal,
+                          ),
+                        ),
+                        title: Text(
+                          'Premium demo activation',
+                          style: TextStyle(fontWeight: FontWeight.w900),
+                        ),
+                        subtitle: Text('Simulated locally • No charge'),
+                        trailing: Text('PKR 0'),
+                      ),
+                    ),
+                  ],
                 ],
-              ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
